@@ -96,14 +96,34 @@ echo.
 
 :push
 echo [1/2] Pushing to GitHub...
+set "PUSH_TRIED=0"
+
+:push_try
 git push origin HEAD
+if not errorlevel 1 goto push_ok
+if "!PUSH_TRIED!"=="1" goto push_failed
+
+rem Someone (or another machine) pushed first: replay our commit on top of it
+rem once, then retry. A real conflict stops here so nothing is lost.
+set "PUSH_TRIED=1"
+echo.
+echo Remote is ahead - rebasing onto origin/!BRANCH! and retrying once...
+git pull --rebase --autostash origin !BRANCH!
 if errorlevel 1 (
     echo.
-    echo GitHub push failed. Common causes:
-    echo   * not authenticated:  gh auth login   (or add an SSH key to GitHub)
-    echo   * remote moved ahead: git pull --rebase  then run this script again
+    echo Rebase failed. Resolve the conflicts by hand, then run this script again.
     goto failed
 )
+goto push_try
+
+:push_failed
+echo.
+echo GitHub push failed. Common causes:
+echo   * not authenticated:  gh auth login   (or add an SSH key to GitHub)
+echo   * branch protection on the remote rejecting the push
+goto failed
+
+:push_ok
 
 echo.
 echo [2/2] Deploying to the hosting account...
