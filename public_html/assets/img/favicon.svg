@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Quran Reader">
+    <rect width="64" height="64" rx="14" fill="#0F5132"/>
+    <g fill="none" stroke="#C9A227" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 10.5l6.1 7.4 9.4 1.6-2.2 9.2 2.2 9.2-9.4 1.6L32 49l-6.1-7.4-9.4-1.6 2.2-9.2-2.2-9.2 9.4-1.6z"/>
+        <path d="M32 21v18"/>
+        <path d="M26.5 26.5h11"/>
+    </g>
+</svg>

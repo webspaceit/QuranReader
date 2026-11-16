@@ -1,0 +1,22 @@
+# Secrets and local configuration
+.env
+app/config/config.php
+
+# Runtime data
+storage/logs/*
+storage/cache/*
+!storage/logs/.gitignore
+!storage/cache/.gitignore
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Build and QA artifacts
+delivery/
+browser-results/
+*.zip
+storage/cache/qa-sessions/

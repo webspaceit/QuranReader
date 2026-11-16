@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /account.php
+Disallow: /login.php
+Disallow: /register.php
+Disallow: /reset-password.php
+Disallow: /forgot-password.php
+Disallow: /bookmarks.php
+Disallow: /settings.php

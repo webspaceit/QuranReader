@@ -1,0 +1,51 @@
+# -----------------------------------------------------------------------------
+# Quran Reader — project-root safety net
+#
+# With the recommended layout (application code next to public_html) this file
+# lives outside the web root and Apache never reads it.
+#
+# It matters in two situations:
+#   1. the host points the document root at the project folder by mistake;
+#   2. someone unzips the whole project into public_html.
+#
+# In both cases only the front controller folder is served; source code,
+# configuration, schema dumps, logs and Markdown documentation are refused.
+# -----------------------------------------------------------------------------
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # The public site lives in public_html/. Send the bare root there.
+    RewriteRule ^$ public_html/ [R=302,L]
+
+    # Everything inside public_html/ is normal web content.
+    RewriteRule ^public_html/ - [L]
+
+    # Nothing else in the project folder may be served.
+    RewriteRule ^ - [F]
+</IfModule>
+
+# Belt and braces when mod_rewrite is unavailable.
+<FilesMatch "\.(sql|log|md|ini|env|bak|old|sh|ps1|yml|yaml|lock|json)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>
