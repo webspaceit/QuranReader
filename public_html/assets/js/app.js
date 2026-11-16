@@ -882,10 +882,31 @@
     }
 
     // ------------------------------------------------------------- boot
+    /** Native <details> only closes from its summary; close it on outside click
+        and on Escape so the translation sheet behaves like a popover. */
+    function initDismissableDetails() {
+        document.addEventListener('click', function (event) {
+            document.querySelectorAll('details.translation-picker[open]').forEach(function (details) {
+                if (!details.contains(event.target)) {
+                    details.removeAttribute('open');
+                }
+            });
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key !== 'Escape') {
+                return;
+            }
+            document.querySelectorAll('details.translation-picker[open]').forEach(function (details) {
+                details.removeAttribute('open');
+            });
+        });
+    }
+
     function boot() {
         // The server already stamped the account value; localStorage wins when
         // this device has a newer choice (guest, or changed before saving).
         applyPlayingStyle(store.getString('playingStyle', root.getAttribute('data-playing-style') || 'card'));
+        initDismissableDetails();
         initThemeToggle();
         initHeader();
         initHeaderHeight();
