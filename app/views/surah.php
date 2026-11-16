@@ -340,6 +340,6 @@ foreach ($reciters as $item) {
                 </button>
             </div>
         </div>
-        <audio data-audio-element preload="none"></audio>
+        <audio data-audio-element preload="auto" playsinline></audio>
     </div>
 </div>

@@ -130,6 +130,7 @@
         openPlayer();
         state.index = index;
         state.errorShown = false;
+        retriedVerse = '';
         audio.src = url;
         updateLabel();
         highlight(index);
@@ -141,6 +142,9 @@
                 el.scrollIntoView({ block: 'center', behavior: 'smooth' });
             }
         }
+
+        prefetchNext();
+        updateMediaSession();
 
         if (options.autoplay !== false) {
             var promise = audio.play();
@@ -200,9 +204,132 @@
         return minutes + ':' + (rest < 10 ? '0' : '') + rest;
     }
 
+    // ------------------------------------------------------ playback resilience
+    // Phones stop recitation for reasons a desktop rarely shows: a dropped
+    // mobile connection mid-verse, a suspended tab, a codec hiccup, or Safari
+    // refusing an automatic play() without a fresh tap. Each of those used to
+    // end the recitation silently; now they are detected and recovered, or the
+    // bad verse is skipped so the session carries on.
+    var prefetchEl = null;
+    var stall = { timer: 0, lastTime: 0, idle: 0 };
+    var retriedVerse = '';
+
+    function prefetchNext() {
+        var next = audioUrl(state.index + 1);
+        if (!next) {
+            return;
+        }
+        if (!prefetchEl) {
+            prefetchEl = new Audio();
+            prefetchEl.preload = 'auto';
+        }
+        if (prefetchEl.src !== next) {
+            prefetchEl.src = next;
+        }
+    }
+
+    function stopWatchdog() {
+        if (stall.timer) {
+            window.clearInterval(stall.timer);
+            stall.timer = 0;
+        }
+        stall.idle = 0;
+    }
+
+    function startWatchdog() {
+        stopWatchdog();
+        stall.lastTime = audio.currentTime;
+        stall.timer = window.setInterval(function () {
+            if (audio.paused || audio.ended) {
+                stall.idle = 0;
+                stall.lastTime = audio.currentTime;
+                return;
+            }
+            if (Math.abs(audio.currentTime - stall.lastTime) > 0.25) {
+                stall.idle = 0;
+                stall.lastTime = audio.currentTime;
+                return;
+            }
+            stall.idle += 1;
+            // Three quiet ticks (~15 s) while "playing" means the stream died.
+            if (stall.idle >= 3) {
+                stall.idle = 0;
+                recoverPlayback();
+            }
+        }, 5000);
+    }
+
+    /** Reload the current verse once, then move on rather than stalling out. */
+    function recoverPlayback() {
+        if (state.index < 0) {
+            return;
+        }
+        var key = String(state.index);
+        if (retriedVerse !== key) {
+            retriedVerse = key;
+            var at = audio.currentTime;
+            var url = audioUrl(state.index);
+            audio.src = url + (url.indexOf('?') === -1 ? '?' : '&') + 'retry=1';
+            audio.addEventListener('loadedmetadata', function once() {
+                audio.removeEventListener('loadedmetadata', once);
+                try { audio.currentTime = at; } catch (e) { /* seek may fail */ }
+                var p = audio.play();
+                if (p && p.catch) { p.catch(function () { /* user must tap */ }); }
+            });
+            audio.load();
+            return;
+        }
+        if (state.index + 1 < verses.length) {
+            app.toast('Skipping a verse the connection could not load.');
+            playIndex(state.index + 1);
+        } else {
+            setPlayingVisual(false);
+            app.toast('The recitation could not be loaded. Check your connection.', 'error');
+        }
+    }
+
+    function updateMediaSession() {
+        if (!('mediaSession' in navigator)) {
+            return;
+        }
+        var el = verseOf(state.index);
+        if (!el) {
+            return;
+        }
+        try {
+            navigator.mediaSession.metadata = new window.MediaMetadata({
+                title: (document.title.split('—')[0] || '').trim() + ' ' + surahNumber + ':' + el.getAttribute('data-verse'),
+                artist: state.reciterName || 'Quran Reader',
+                album: document.title.split('—')[0].trim(),
+            });
+        } catch (e) { /* older browsers */ }
+    }
+
     if (audio) {
-        audio.addEventListener('play', function () { setPlayingVisual(true); });
-        audio.addEventListener('pause', function () { setPlayingVisual(false); });
+        audio.addEventListener('play', function () {
+            setPlayingVisual(true);
+            startWatchdog();
+            updateMediaSession();
+        });
+        audio.addEventListener('pause', function () {
+            setPlayingVisual(false);
+            stopWatchdog();
+        });
+        audio.addEventListener('playing', function () {
+            setPlayingVisual(true);
+            stopWatchdog();
+            startWatchdog();
+        });
+        audio.addEventListener('waiting', function () {
+            if (playToggle) {
+                playToggle.classList.add('is-buffering');
+            }
+        });
+        audio.addEventListener('canplay', function () {
+            if (playToggle) {
+                playToggle.classList.remove('is-buffering');
+            }
+        });
         audio.addEventListener('timeupdate', function () {
             if (!progressEl) {
                 return;
@@ -217,6 +344,7 @@
             }
         });
         audio.addEventListener('ended', function () {
+            stopWatchdog();
             if (state.index + 1 < verses.length) {
                 playIndex(state.index + 1, { scroll: true });
             } else {
@@ -225,12 +353,32 @@
             }
         });
         audio.addEventListener('error', function () {
-            if (!state.errorShown && audio.src) {
-                state.errorShown = true;
-                setPlayingVisual(false);
-                app.toast('This recitation could not be loaded. Check your connection or try another reciter.', 'error');
+            if (!audio.src) {
+                return;
             }
+            setPlayingVisual(false);
+            stopWatchdog();
+            // One automatic retry, then skip rather than stopping the session.
+            recoverPlayback();
         });
+
+        // Lock-screen / notification controls, and the reason Android keeps the
+        // audio session alive when the reader is backgrounded.
+        if ('mediaSession' in navigator) {
+            var actions = {
+                play: function () { togglePlayback(); },
+                pause: function () { audio.pause(); },
+                nexttrack: function () { step(1); },
+                previoustrack: function () { step(-1); },
+            };
+            Object.keys(actions).forEach(function (name) {
+                try {
+                    navigator.mediaSession.setActionHandler(name, actions[name]);
+                } catch (e) { /* unsupported action */ }
+            });
+        }
+
+        window.addEventListener('pagehide', stopWatchdog);
     }
 
     if (playToggle) {

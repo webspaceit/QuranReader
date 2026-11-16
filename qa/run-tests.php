@@ -213,7 +213,7 @@ foreach (['APP_URL', 'APP_ENV', 'DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_PAS
     check(".env.example documents $key", str_contains($example, $key . '='));
 }
 check('.env stays out of version control', str_contains((string) file_get_contents($root . '/.gitignore'), '.env'));
-check('root .htaccess denies dotfiles', str_contains((string) file_get_contents($root . '/.htaccess'), 'FilesMatch "^\.'));
+check('root .htaccess denies dotfiles', str_contains((string) file_get_contents($root . '/.htaccess'), '(^|/)\\. - [F,L]'));
 
 if (!defined('QURAN_APP')) {
     define('QURAN_APP', $root . '/app');
