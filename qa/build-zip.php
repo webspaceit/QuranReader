@@ -16,6 +16,8 @@ $skipDirs = [
     'qa', 'delivery', 'browser-results', '.git', 'dist', 'node_modules',
     'storage/logs', 'storage/cache',
     'quran-package', 'quran-package2',
+    // Screenshots dropped in by the editor/chat client; never part of a release.
+    '.cloud-attachments', '.idea', '.vscode',
 ];
 $skipFiles = ['app/config/config.php', '.env', '.DS_Store', 'Thumbs.db'];
 $skipNames = ['quran-website-v1.zip'];

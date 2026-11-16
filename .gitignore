@@ -20,3 +20,4 @@ delivery/
 browser-results/
 *.zip
 storage/cache/qa-sessions/
+.cloud-attachments/
