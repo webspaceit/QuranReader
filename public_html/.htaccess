@@ -55,6 +55,27 @@ RedirectMatch 404 /(app|storage|database|bin|tests|qa|vendor)/
 # -----------------------------------------------------------------------------
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # When the document root is the project folder (the StackCP layout, where
+    # the site lives in public_html/), a URL starting with /public_html/ is an
+    # internal detail: redirect it to the canonical path, query string intact.
+    #
+    # This has to live here and not in the project-root .htaccess: a request
+    # that resolves inside public_html/ is handled by *this* file, and the
+    # parent's rewrite rules never run for it. On hosts where public_html/ is
+    # itself the document root (or the site is installed in a sub-directory)
+    # the condition below never matches, so the rule stays inert.
+    #
+    # Matched against THE_REQUEST (the raw request line) instead of the
+    # per-directory path. The capture therefore already contains everything
+    # after /public_html/, which makes the rule give the same result whether
+    # this file is the document root (where the per-directory path would be
+    # "public_html/…" and a naive /$1 would loop) or sits one level above it.
+    RewriteCond %{THE_REQUEST} \s/+public_html/([^\s?]*)
+    RewriteRule ^ /%1 [R=301,L]
+    RewriteCond %{THE_REQUEST} \s/+public_html/?\s
+    RewriteRule ^ / [R=301,L]
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ 404.php [L]

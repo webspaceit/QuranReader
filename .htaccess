@@ -24,9 +24,11 @@ Options -Indexes
     # Archives, database dumps and Windows helper scripts sitting in the root.
     RewriteRule \.(zip|tar|gz|sql|bat|ps1|md)$ - [F,L]
 
-    # /public_html/... is an internal detail, not a public URL: send it to the
-    # canonical path so search engines and users never see the folder name.
-    RewriteRule ^public_html/(.*)$ /$1 [R=301,L]
+    # /public_html/... is canonicalised by public_html/.htaccess, not here:
+    # measured on this host, a request that resolves inside public_html/ is
+    # handled by that directory's .htaccess alone, so the parent rule never
+    # runs. Keeping a second copy here would only be dead code (and a loop
+    # risk if the docroot ever moves down to public_html/).
 
     # Already inside the web root — leave the request untouched.
     RewriteCond %{REQUEST_URI} !^/public_html/
