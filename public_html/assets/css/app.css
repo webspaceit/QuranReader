@@ -606,7 +606,10 @@ input:disabled { background: var(--bg-muted); color: var(--text-muted); }
     letter-spacing: 0;
 }
 .verse-translation {
-    margin: 0; color: var(--text-soft); font-size: 1rem; line-height: 1.65;
+    /* Centred like the Arabic line: the 52rem reading measure stays, but the
+       leftover space inside the 64rem column is split evenly instead of
+       piling up on the right. */
+    margin: 0 auto; color: var(--text-soft); font-size: 1rem; line-height: 1.65;
     max-width: 52rem;
 }
 .ayah-marker {
@@ -1060,7 +1063,7 @@ body.player-open {
 :root[data-theme="dark"] .verse[data-highlight="purple"] { --hl: #9578D8; --hl-soft: rgba(149, 120, 216, .14); }
 
 .verse-note {
-    margin: .65rem 0 0;
+    margin: .65rem auto 0;
     max-width: 52rem;
     padding: .55rem .75rem;
     background: var(--bg-muted);
