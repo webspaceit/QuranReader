@@ -1,5 +1,7 @@
 # Normalise line endings so the same tree deploys from Windows or Linux.
 * text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
 *.png binary
 *.jpg binary
 *.jpeg binary
