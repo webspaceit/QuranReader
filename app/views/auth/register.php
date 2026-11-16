@@ -1,6 +1,6 @@
 <?php ?>
 <section class="section auth-section">
-    <div class="container auth-container">
+    <div class="container auth-container auth-container--register">
         <div class="card auth-card">
             <h1>Create an account</h1>
             <p class="muted">Free, no email confirmation required, and your bookmarks follow you between devices.</p>

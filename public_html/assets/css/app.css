@@ -1390,3 +1390,11 @@ body.has-install-bar { padding-bottom: 6.5rem; }
     .picker-panel .radio-row { padding: .55rem .35rem; }
     .picker-panel .btn-block { position: sticky; bottom: -.9rem; margin-top: .5rem; }
 }
+
+/* Registration carries four fields, so it gets a wider column than the
+   two-field sign-in form. Login/forgot/reset stay at 460px. */
+.auth-container--register { max-width: 620px; }
+.auth-container--register .auth-card { padding: 2.1rem 2.2rem; }
+@media (max-width: 520px) {
+    .auth-container--register .auth-card { padding: 1.5rem 1.25rem; }
+}
