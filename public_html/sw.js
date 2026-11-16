@@ -16,7 +16,7 @@
  */
 'use strict';
 
-var CACHE_VERSION = 'v1';
+var CACHE_VERSION = 'v2';
 var STATIC_CACHE = 'quran-static-' + CACHE_VERSION;
 var PAGE_CACHE = 'quran-pages-' + CACHE_VERSION;
 var API_CACHE = 'quran-api-' + CACHE_VERSION;
@@ -29,6 +29,7 @@ var SHELL = [
     'settings.php',
     'manifest.webmanifest',
     'assets/css/app.css',
+    'assets/css/sanctuary.css',
     'assets/js/theme.js',
     'assets/js/app.js',
     'assets/js/pwa.js',
@@ -41,7 +42,9 @@ var SHELL = [
     'assets/img/icon-512.png',
     'assets/fonts/amiri-quran-arabic.woff2',
     'assets/fonts/amiri-regular-arabic.woff2',
-    'assets/fonts/amiri-bold-arabic.woff2'
+    'assets/fonts/amiri-bold-arabic.woff2',
+    'assets/fonts/playfair-display-latin.woff2',
+    'assets/fonts/plus-jakarta-sans-latin.woff2'
 ];
 
 function scoped(path) {

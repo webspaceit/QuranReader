@@ -29,8 +29,8 @@ $year        = date('Y');
     <title><?= e($pageTitle) ?> · <?= e($appName) ?></title>
     <meta name="description" content="<?= e($metaDescription) ?>">
     <link rel="canonical" href="<?= e($canonical) ?>">
-    <meta name="theme-color" content="#0F5132" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#fbf9f4" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f1512" media="(prefers-color-scheme: dark)">
     <meta name="csrf-token" content="<?= e($csrfToken) ?>">
     <meta name="app-base" content="<?= e(base_path()) ?>">
     <meta name="authed" content="<?= $currentUser ? '1' : '0' ?>">
@@ -50,9 +50,10 @@ $year        = date('Y');
     <meta name="apple-mobile-web-app-title" content="<?= e($appName) ?>">
     <meta name="application-name" content="<?= e($appName) ?>">
     <link rel="stylesheet" href="<?= e(asset_url('assets/css/app.css')) ?>">
+    <link rel="stylesheet" href="<?= e(asset_url('assets/css/sanctuary.css')) ?>">
     <script src="<?= e(asset_url('assets/js/theme.js')) ?>"></script>
 </head>
-<body class="<?= e($bodyClass) ?>">
+<body class="<?= e(trim($bodyClass . ' ' . ($activeNav === 'home' ? 'page-home' : ''))) ?>">
 <?php require QURAN_APP . '/views/partials/icons.php'; ?>
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -62,18 +63,28 @@ $year        = date('Y');
             <span class="brand-mark" aria-hidden="true">
                 <svg class="icon" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-logo"/></svg>
             </span>
-            <span class="brand-text"><?= e($appName) ?></span>
+            <span class="brand-block">
+                <span class="brand-text"><?= e($appName) ?></span>
+                <span class="brand-sub">Quranic Sanctuary</span>
+            </span>
         </a>
 
         <nav class="main-nav" aria-label="Main">
-            <a href="<?= e(u('')) ?>" class="<?= $activeNav === 'home' ? 'is-active' : '' ?>">Home</a>
-            <a href="<?= e(u('surah.php?n=1')) ?>" class="<?= $activeNav === 'read' ? 'is-active' : '' ?>">Read</a>
+            <a href="<?= e(u('')) ?>" class="<?= $activeNav === 'home' ? 'is-active' : '' ?>">Surah Index</a>
+            <a href="<?= e(u('page.php?n=1')) ?>">Mushaf Reader</a>
             <a href="<?= e(u('juz.php')) ?>">Juz</a>
-            <a href="<?= e(u('search.php')) ?>" class="<?= $activeNav === 'search' ? 'is-active' : '' ?>">Search</a>
+            <a href="<?= e(u('reciters.php')) ?>" class="<?= $activeNav === 'audio' ? 'is-active' : '' ?>">Reciters &amp; Audio</a>
+
             <a href="<?= e(u('bookmarks.php')) ?>" class="<?= $activeNav === 'bookmarks' ? 'is-active' : '' ?>">
-                Bookmarks<span class="count-pill" data-bookmark-count <?= ($bookmarkCount ?? 0) > 0 ? '' : 'hidden' ?>><?= (int) ($bookmarkCount ?? 0) ?></span>
+                Bookmarks &amp; Notes<span class="count-pill" data-bookmark-count <?= ($bookmarkCount ?? 0) > 0 ? '' : 'hidden' ?>><?= (int) ($bookmarkCount ?? 0) ?></span>
             </a>
         </nav>
+
+        <form class="topbar-search" action="<?= e(u('search.php')) ?>" method="get" role="search">
+            <label class="visually-hidden" for="topbar-q">Search the Quran</label>
+            <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.2 4.2"/></svg>
+            <input id="topbar-q" type="search" name="q" placeholder="Search a surah or ayah" autocomplete="off" enterkeyhint="search">
+        </form>
 
         <div class="header-actions">
             <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch to dark mode" title="Switch to dark mode">
@@ -82,13 +93,12 @@ $year        = date('Y');
             </button>
 
             <?php if ($currentUser): ?>
-                <a class="btn btn-ghost btn-sm account-link" href="<?= e(u('account.php')) ?>">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><use href="#i-user"/></svg>
-                    <span class="hide-sm"><?= e($currentUser['full_name'] ?: 'Account') ?></span>
+                <a class="avatar-btn" href="<?= e(u('account.php')) ?>" aria-label="Your account" title="<?= e($currentUser['full_name'] ?: 'Your account') ?>">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-user"/></svg>
                 </a>
             <?php else: ?>
-                <a class="btn btn-ghost btn-sm hide-sm" href="<?= e(u('login.php')) ?>">Sign in</a>
-                <a class="btn btn-primary btn-sm" href="<?= e(u('register.php')) ?>">Create account</a>
+                <a class="btn btn-primary btn-sm auth-cta" href="<?= e(u('login.php')) ?>">Sign in</a>
+                <a class="auth-alt" href="<?= e(u('register.php')) ?>">Register</a>
             <?php endif; ?>
         </div>
     </div>
@@ -133,6 +143,7 @@ $year        = date('Y');
                 <li><a href="<?= e(u('')) ?>">Home</a></li>
                 <li><a href="<?= e(u('surah.php?n=1')) ?>">Read the Quran</a></li>
                 <li><a href="<?= e(u('juz.php')) ?>">Juz list</a></li>
+                <li><a href="<?= e(u('reciters.php')) ?>">Reciters &amp; audio</a></li>
                 <li><a href="<?= e(u('search.php')) ?>">Search</a></li>
                 <li><a href="<?= e(u('page.php?n=1')) ?>">Mushaf pages</a></li>
             </ul>

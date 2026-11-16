@@ -35,7 +35,7 @@ final class VerseRepository
     {
         return Database::select(
             'SELECT v.id, v.surah_number, v.verse_number, v.verse_key, v.text_uthmani, v.page, v.juz, v.sajda,
-                    c.name_simple, c.name_arabic, vt.text AS translation_text
+                    c.name_simple, c.name_english, c.translated_name, c.name_arabic, vt.text AS translation_text
              FROM verses v
              JOIN chapters c ON c.id = v.surah_number
              LEFT JOIN verse_translations vt ON vt.verse_id = v.id AND vt.translation_id = ?

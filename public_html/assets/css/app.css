@@ -1308,3 +1308,13 @@ body.has-install-bar { padding-bottom: 6.5rem; }
 @media (prefers-reduced-motion: reduce) {
     .play-toggle.is-buffering .ico { animation: none; opacity: .55; }
 }
+
+/* Header auth: one primary button, with a quiet register link only where there
+   is room for it. Below 1100px the login page carries the "create account"
+   path, which keeps the bar from wrapping on laptops and tablets. */
+.auth-alt {
+    font-size: .85rem; font-weight: 600; color: var(--text-muted);
+    text-decoration: none; white-space: nowrap; padding: .3rem .15rem;
+}
+.auth-alt:hover { color: var(--accent); text-decoration: none; }
+@media (max-width: 1100px) { .auth-alt { display: none; } }

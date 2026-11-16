@@ -286,6 +286,17 @@ final class Site
             isset($_GET['translation']) ? (string) $_GET['translation'] : $settings['translation_id']
         );
 
+        $verses = VerseRepository::byPage($page, $translationId);
+
+        // Show the basmala above the first verse when a page opens a surah.
+        $basmala = '';
+        if ($verses !== [] && (int) $verses[0]['verse_number'] === 1) {
+            $chapter = ChapterRepository::find((int) $verses[0]['surah_number']);
+            if ($chapter !== null) {
+                $basmala = self::basmala($chapter);
+            }
+        }
+
         self::render('mushaf', [
             'pageTitle'    => 'Mushaf page ' . $page,
             'canonical'    => absolute_url('page.php?n=' . $page),
@@ -293,9 +304,75 @@ final class Site
             'page'         => $page,
             'maxPage'      => $max,
             'minPage'      => $min,
-            'verses'       => VerseRepository::byPage($page, $translationId),
+            'verses'       => $verses,
+            'basmala'      => $basmala,
             'translation'  => TranslationRepository::find($translationId),
             'translations' => TranslationRepository::all(),
+        ]);
+    }
+
+    // -------------------------------------------------------------------------
+    // Reciters & audio
+    // -------------------------------------------------------------------------
+
+    public function reciters(): void
+    {
+        $all   = ReciterRepository::all();
+        $q     = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
+        $style = isset($_GET['style']) ? trim((string) $_GET['style']) : '';
+        $style = mb_substr($style, 0, 50);
+
+        $styles = [];
+        foreach ($all as $reciter) {
+            $label = (string) $reciter['style'];
+            if ($label !== '') {
+                $styles[$label] = ($styles[$label] ?? 0) + 1;
+            }
+        }
+
+        $needle = mb_strtolower(mb_substr($q, 0, 100));
+        $list   = array_values(array_filter($all, static function (array $reciter) use ($needle, $style): bool {
+            if ($style !== '' && (string) $reciter['style'] !== $style) {
+                return false;
+            }
+            if ($needle === '') {
+                return true;
+            }
+            $haystack = mb_strtolower(
+                $reciter['english_name'] . ' ' . $reciter['name'] . ' ' . $reciter['id'] . ' ' . $reciter['style']
+            );
+            return str_contains($haystack, $needle);
+        }));
+
+        $featured = null;
+        foreach ($all as $reciter) {
+            if ((int) $reciter['is_default'] === 1) {
+                $featured = $reciter;
+                break;
+            }
+        }
+        $featured ??= $all[0] ?? null;
+
+        $settings = Auth::settings();
+        $sample   = VerseRepository::random($settings['translation_id']);
+        $host     = parse_url((string) ($featured['audio_base'] ?? (string) Config::get('content.audio_base', ''))) ?: [];
+
+        self::render('reciters', [
+            'pageTitle'       => 'Reciters & audio — verse-by-verse recitation',
+            'metaDescription' => 'Listen to the Quran recited verse by verse by ' . count($all)
+                . ' reciters, streamed per ayah and cached for offline reading.',
+            'canonical'       => absolute_url('reciters.php'),
+            'activeNav'       => 'audio',
+            'bodyClass'       => 'page-audio',
+            'reciters'        => $list,
+            'totalReciters'   => count($all),
+            'styles'          => $styles,
+            'query'           => $q,
+            'activeStyle'     => $style,
+            'featured'        => $featured,
+            'sampleVerse'     => $sample,
+            'audioHost'       => (string) ($host['host'] ?? 'cdn.islamic.network'),
+            'totalVerses'     => VerseRepository::count(),
         ]);
     }
 

@@ -75,6 +75,17 @@
         <path d="M14.5 4.5V9H19"/>
         <path d="M8.5 13h7M8.5 16.2h4.5"/>
     </symbol>
+    <symbol id="i-book" viewBox="0 0 24 24">
+        <path d="M12 6.4c-1.8-1.2-4.1-1.7-6.5-1.5v12.3c2.4-.2 4.7.3 6.5 1.5 1.8-1.2 4.1-1.7 6.5-1.5V4.9c-2.4-.2-4.7.3-6.5 1.5z"/>
+        <path d="M12 6.4v12.3"/>
+    </symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24">
+        <path d="M5 12h13"/>
+        <path d="M13 7l5 5-5 5"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="M5 12.6l4.4 4.4L19 7.4"/>
+    </symbol>
     <symbol id="i-download" viewBox="0 0 24 24">
         <path d="M12 4v10"/>
         <path d="M8 10.5l4 4 4-4"/>
