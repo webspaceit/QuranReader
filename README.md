@@ -657,3 +657,4 @@ and removing them would also misrepresent the source of the text.
   CDN.
 - **Quran text and translations:** belong to their publishers; consult the API provider's terms
   before redistributing them outside this website.
+"# QuranReader" 
