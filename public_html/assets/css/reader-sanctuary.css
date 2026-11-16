@@ -33,7 +33,7 @@
 .reader .reader-toolbar::before {
     background: color-mix(in srgb, var(--paper) 70%, transparent);
 }
-.reader .reader-toolbar-inner { max-width: 64rem; }
+.reader .reader-toolbar-inner { max-width: calc(var(--container) - 2.3rem); }
 .reader .jump-form select,
 .reader .btn {
     border-radius: 0.75rem;
@@ -338,4 +338,14 @@
     .reader .verse-arabic { line-height: 2.05; }
     .reader .verse-translation { padding: 0.75rem 0.8rem; font-size: 0.95rem; }
     .reader .surah-meta-list { gap: 0.4rem 0.8rem; font-size: 0.72rem; }
+}
+
+/* Page frames follow the header container, so the cartouche, verses, basmala
+   and pager line up with the site header instead of floating in the middle of
+   the viewport. 1080/1240px container minus its 1.15rem gutters each side. */
+.reader .surah-header,
+.reader .basmala,
+.reader .verse-list,
+.reader .surah-pagination {
+    max-width: calc(var(--container) - 2.3rem);
 }
