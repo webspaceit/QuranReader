@@ -462,7 +462,28 @@ input[type="search"], select, textarea {
         position: sticky;
         top: calc(var(--header-h, 80px) + 1rem);
         align-self: start;
+        /* A sticky box taller than the viewport can never reveal its bottom —
+           the guest card sat 24 px (1440x900) to 124 px (1280x800) below the
+           fold for the whole pinned phase. Cap the rail to the viewport and
+           let it scroll on its own instead. */
+        max-height: calc(100vh - var(--header-h, 80px) - 2rem);
+        max-height: calc(100dvh - var(--header-h, 80px) - 2rem);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding-right: .15rem;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-strong) transparent;
     }
+    .content-grid > .side-stack::-webkit-scrollbar { width: 8px; }
+    .content-grid > .side-stack::-webkit-scrollbar-thumb {
+        background: var(--border-strong); border-radius: 999px;
+    }
+    .content-grid > .side-stack::-webkit-scrollbar-track { background: transparent; }
+
+    /* The clamp above belongs to the rail, not to the cards: without this the
+       flex children shrink to fit and the guest card (which has overflow:hidden)
+       absorbs the whole deficit, clipping its own buttons. */
+    .content-grid > .side-stack > * { flex: 0 0 auto; }
 }
 .list-head {
     display: flex; align-items: center; justify-content: space-between;
