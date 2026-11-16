@@ -145,6 +145,7 @@ final class Site
             'bodyClass'     => 'page-reader',
             'activeNav'     => 'read',
             'pageScripts'   => ['assets/js/reader.js', 'assets/js/marks.js'],
+            'pageStyles'    => ['assets/css/reader-sanctuary.css'],
             'chapter'       => $chapter,
             'chapters'      => ChapterRepository::all(),
             'verses'        => $verses,

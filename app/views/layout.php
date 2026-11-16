@@ -17,6 +17,7 @@
  * @var array<int,string> $pageScripts
  */
 $pageScripts = $pageScripts ?? [];
+$pageStyles  = $pageStyles ?? [];
 $bodyClass   = $bodyClass ?? '';
 $activeNav   = $activeNav ?? '';
 $year        = date('Y');
@@ -51,6 +52,9 @@ $year        = date('Y');
     <meta name="application-name" content="<?= e($appName) ?>">
     <link rel="stylesheet" href="<?= e(asset_url('assets/css/app.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset_url('assets/css/sanctuary.css')) ?>">
+<?php foreach ($pageStyles as $style): ?>
+    <link rel="stylesheet" href="<?= e(asset_url($style)) ?>">
+<?php endforeach; ?>
     <script src="<?= e(asset_url('assets/js/theme.js')) ?>"></script>
 </head>
 <body class="<?= e(trim($bodyClass . ' ' . ($activeNav === 'home' ? 'page-home' : ''))) ?>">
