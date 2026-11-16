@@ -36,7 +36,7 @@ search, verse-by-verse recitation, bookmarks, reading progress, dark mode and us
 | All 114 surahs, Arabic + English names | ✅ | Names, revelation place, verse count, Mushaf pages |
 | Uthmani Arabic text, RTL | ✅ | Bundled Amiri Quran webfont, adjustable size |
 | Multiple translations | ✅ | 4 English + 2 Bengali editions imported by default; add more in config |
-| Search (Arabic + translation, surah name) | ✅ | Diacritic-insensitive Arabic search, search-as-you-type, matched terms highlighted |
+| Search (Arabic + translation, surah name) | ✅ | Diacritic-insensitive Arabic search, search-as-you-type, matched terms highlighted, header surah picker |
 | Audio recitation | ✅ | 7 reciters, verse-by-verse continuous playback, highlight, prev/next |
 | User accounts | ✅ | Register, login, logout, password reset by email |
 | Bookmarks | ✅ | MySQL for members, `localStorage` for guests, merge on sign-in; grouped per surah as a collapsible tree |

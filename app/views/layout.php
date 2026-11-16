@@ -80,7 +80,7 @@ $year        = date('Y');
             </a>
         </nav>
 
-        <form class="topbar-search" action="<?= e(u('search.php')) ?>" method="get" role="search">
+        <form class="topbar-search" action="<?= e(u('search.php')) ?>" method="get" role="search" data-surah-picker>
             <label class="visually-hidden" for="topbar-q">Search the Quran</label>
             <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.2 4.2"/></svg>
             <input id="topbar-q" type="search" name="q" placeholder="Search a surah or ayah" autocomplete="off" enterkeyhint="search">
@@ -174,6 +174,7 @@ $year        = date('Y');
 
 <script src="<?= e(asset_url('assets/js/app.js')) ?>" defer></script>
 <script src="<?= e(asset_url('assets/js/pwa.js')) ?>" defer></script>
+<script src="<?= e(asset_url('assets/js/surah-picker.js')) ?>" defer></script>
 <?php foreach ($pageScripts as $script): ?>
     <script src="<?= e(asset_url($script)) ?>" defer></script>
 <?php endforeach; ?>
