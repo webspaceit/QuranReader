@@ -208,19 +208,28 @@
             });
         });
 
-        // Position under the button, clamped to the verse width.
-        var verseRect = li.getBoundingClientRect();
-        var buttonRect = button.getBoundingClientRect();
-        pop.style.top = (buttonRect.bottom - verseRect.top + 6) + 'px';
-
         // The popover hangs below the verse; lift this verse above its later
         // siblings so the swatches stay clickable.
         li.classList.add('has-pop');
-        li.appendChild(pop);
-        var width = pop.offsetWidth;
-        var left = buttonRect.left - verseRect.left;
-        left = Math.max(4, Math.min(left, li.clientWidth - width - 4));
-        pop.style.left = left + 'px';
+
+        // The reader puts the action row at the top of the card, so an
+        // absolutely positioned popover would land on the Arabic line. Drop it
+        // into the flow under the row: the card grows and no text is covered.
+        var host = li.querySelector('.verse-actions');
+        if (host) {
+            pop.classList.add('highlight-pop-inline');
+            host.insertAdjacentElement('afterend', pop);
+        } else {
+            // Position under the button, clamped to the verse width.
+            var verseRect = li.getBoundingClientRect();
+            var buttonRect = button.getBoundingClientRect();
+            pop.style.top = (buttonRect.bottom - verseRect.top + 6) + 'px';
+            li.appendChild(pop);
+            var width = pop.offsetWidth;
+            var left = buttonRect.left - verseRect.left;
+            left = Math.max(4, Math.min(left, li.clientWidth - width - 4));
+            pop.style.left = left + 'px';
+        }
 
         openPop = pop;
         var first = pop.querySelector('.swatch');

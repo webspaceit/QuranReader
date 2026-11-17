@@ -275,6 +275,41 @@
     vertical-align: middle;
 }
 
+/* The base sheet draws verse state as a *ghost* card behind the text
+   (::before, inset -0.8rem) plus an accent bar hanging outside the card edge
+   (::after at left: -0.8rem). Now that .verse is itself the card, that ghost
+   protruded around the border and read as a stray dark bar at the left edge on
+   hover / while playing, and highlight tints only leaked out as slivers.
+   Re-express every state on the card surface instead. */
+.reader .verse::before { display: none; }
+.reader .verse::after {
+    left: 0;
+    top: 0.9rem;
+    bottom: 0.9rem;
+    width: 3px;
+    border-radius: 999px;
+    background: var(--hl, var(--gold));
+    opacity: 0;
+}
+
+@media (hover: hover) {
+    .reader .verse:hover {
+        border-color: rgba(197, 160, 89, 0.55);
+        box-shadow: 0 2px 4px rgba(0, 47, 38, 0.06), 0 18px 34px -24px rgba(0, 47, 38, 0.5);
+    }
+}
+.reader .verse:focus-within {
+    border-color: color-mix(in srgb, var(--emerald-2) 45%, transparent);
+    box-shadow: 0 0 0 3px rgba(13, 71, 59, 0.1);
+}
+
+/* Highlight now tints the card itself (the base rule only painted the ghost) */
+.reader .verse[data-highlight] {
+    background: color-mix(in srgb, var(--hl) 10%, var(--card));
+    border-color: color-mix(in srgb, var(--hl) 45%, transparent);
+}
+.reader .verse[data-highlight]::after { opacity: 1; }
+
 /* Currently reciting: gilded aura instead of a flat tint */
 .reader .verse.is-playing {
     border-color: rgba(197, 160, 89, 0.65);
@@ -282,6 +317,7 @@
         0 0 0 1.5px rgba(197, 160, 89, 0.55),
         0 18px 36px -18px rgba(13, 71, 59, 0.35);
 }
+.reader .verse.is-playing::after { opacity: 1; }
 
 /* Notes keep their card but pick up the gold hairline */
 .reader .verse-note {
@@ -348,4 +384,23 @@
 .reader .verse-list,
 .reader .surah-pagination {
     max-width: calc(var(--container) - 2.3rem);
+}
+
+/* Colour picker now sits in the flow under the action row (see marks.js), so it
+   never covers the Arabic line the way the absolutely positioned one did. */
+.reader .highlight-pop.highlight-pop-inline {
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+    /* .verse is a column flex box, so a static popover after the action row
+       would still flow after .verse-main (the bottom of the card). Give it the
+       same order as the row it belongs to — document order then puts it right
+       underneath the icons. */
+    order: -1;
+    margin: -0.1rem 0 0.65rem;
+}
+.reader .highlight-swatches {
+    background: var(--card);
+    border-color: rgba(197, 160, 89, 0.4);
+    box-shadow: 0 8px 20px -12px rgba(0, 47, 38, 0.45);
 }
