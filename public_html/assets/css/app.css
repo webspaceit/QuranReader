@@ -999,6 +999,18 @@ input:disabled { background: var(--bg-muted); color: var(--text-muted); }
 }
 .footer-bottom a { color: var(--text-soft); }
 
+/* The legal line and the data-source credit are reference matter, not content:
+   keep them quieter than body copy. Scoped, so .small elsewhere is untouched. */
+.footer-bottom .small {
+    font-size: .76rem;
+    line-height: 1.5;
+    letter-spacing: .005em;
+    /* Muted grey only reaches 4.05:1 on the footer surface, which fails AA once
+       the text is this small. The softer-but-darker token clears it. */
+    color: var(--text-soft);
+}
+.footer-bottom a { color: var(--text-soft); }
+
 .empty-state { text-align: center; padding: 2.2rem 1.2rem; }
 .empty-state h2 { margin-bottom: .4rem; }
 .code-block {
