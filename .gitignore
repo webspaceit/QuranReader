@@ -21,3 +21,6 @@ browser-results/
 *.zip
 storage/cache/qa-sessions/
 .cloud-attachments/
+
+# curl cookie jars from local probes
+*.tmp
