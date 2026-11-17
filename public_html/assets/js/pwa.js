@@ -330,7 +330,10 @@
         if (isAndroid()) {
             return 'In Chrome on Android: open the three-dot menu and choose "Add to Home screen".';
         }
-        return 'In Chrome or Edge: open the browser menu and choose "Install app" (or "Add to Home screen").';
+        // Neither mobile UA matched: could be a desktop, or a phone whose browser is
+        // sending a desktop UA ("Desktop site" mode). Name both menu items.
+        return 'Open the browser menu and choose "Install app" or "Add to Home screen" '
+            + '(on a phone, first turn off "Desktop site" if it is on).';
     }
 
     function isAndroid() {
@@ -367,7 +370,7 @@
         }
         return {
             title: 'Install the app',
-            body: 'Open the browser menu and choose "Install page as app" (older builds say "Add to Home screen").',
+            body: 'Open the browser menu and choose "Install app" or "Add to Home screen".',
             cta: 'Got it'
         };
     }
