@@ -90,7 +90,7 @@ foreach ($reciters as $item) {
                                     <input type="radio" name="translation" value="<?= e($item['id']) ?>"
                                         <?= ($translation['id'] ?? '') === $item['id'] ? 'checked' : '' ?>>
                                     <span>
-                                        <strong><?= e($item['english_name']) ?></strong>
+                                        <strong lang="<?= e($item['language_code'] ?? 'en') ?>"><?= e($item['english_name']) ?></strong>
                                         <small class="muted"><?= e($item['language_name']) ?> · <?= e($item['author_name']) ?></small>
                                     </span>
                                 </label>
@@ -129,7 +129,7 @@ foreach ($reciters as $item) {
                 <?php if ($translation): ?>
                     <li class="meta-translation">
                         <span class="meta-label">Translation</span>
-                        <?= e($translation['english_name']) ?>
+                        <span lang="<?= e($translation['language_code'] ?? 'en') ?>"><?= e($translation['english_name']) ?></span>
                         <?php if (!empty($translation['author_name'])): ?>
                             <span class="muted">by <?= e($translation['author_name']) ?></span>
                         <?php endif; ?>

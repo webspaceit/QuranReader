@@ -3,6 +3,31 @@
    Calm, minimal, mobile-first. Light and dark themes share one set of tokens.
    ========================================================================== */
 
+/* Bengali text — Hind Siliguri (OFL), Bengali subset only. */
+@font-face {
+    font-family: "Hind Siliguri";
+    src: url("../fonts/hind-siliguri-bengali-400.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1, U+11DF0-11DF1;
+}
+@font-face {
+    font-family: "Hind Siliguri";
+    src: url("../fonts/hind-siliguri-bengali-600.woff2") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1, U+11DF0-11DF1;
+}
+@font-face {
+    font-family: "Hind Siliguri";
+    src: url("../fonts/hind-siliguri-bengali-700.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1, U+11DF0-11DF1;
+}
 @font-face {
     font-family: "Amiri Quran";
     src: url("../fonts/amiri-quran-arabic.woff2") format("woff2");
@@ -63,7 +88,11 @@
     --radius: 12px;
     --radius-lg: 18px;
 
-    --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans Bengali", "Nirmala UI", "Bangla", sans-serif;
+    --font-ui: "Hind Siliguri", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans Bengali", "Nirmala UI", "Bangla", sans-serif;
+    /* Bengali sits ahead of the system Bengali faces so the reader and the
+       Bengali translations render in one known typeface. The @font-face blocks
+       below are limited to the Bengali block, so Latin text is unaffected. */
+    --font-bengali: "Hind Siliguri", "Noto Sans Bengali", "Nirmala UI", "Bangla", sans-serif;
     --font-arabic: "Amiri Quran", "Amiri", "Scheherazade New", "Traditional Arabic", "Noto Naskh Arabic", "Times New Roman", serif;
     --font-arabic-ui: "Amiri", "Scheherazade New", "Traditional Arabic", "Noto Naskh Arabic", serif;
 
@@ -1402,3 +1431,20 @@ body.has-install-bar { padding-bottom: 6.5rem; }
 @media (max-width: 520px) {
     .auth-container--register .auth-card { padding: 1.5rem 1.25rem; }
 }
+
+/* ------------------------------------------------------------- bengali --- */
+/* Any element marked lang="bn" (the Bengali translation blocks, their labels
+   and the picker entries) renders in Hind Siliguri. The faces are declared
+   with a Bengali-only unicode-range, so switching family here cannot affect
+   Latin or Arabic runs inside the same element. */
+:root :lang(bn) {
+    font-family: var(--font-bengali);
+}
+.verse-translation[lang="bn"] {
+    /* Bengali needs more leading than Latin: matras and conjuncts collide at
+       1.65. Keep the size close so the column rhythm is unchanged. */
+    line-height: 1.95;
+    letter-spacing: 0;
+    word-spacing: 0.01em;
+}
+.verse-note[lang="bn"] { line-height: 1.9; }

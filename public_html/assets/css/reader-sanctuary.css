@@ -404,3 +404,11 @@
     border-color: rgba(197, 160, 89, 0.4);
     box-shadow: 0 8px 20px -12px rgba(0, 47, 38, 0.45);
 }
+
+/* Bengali translation: Hind Siliguri, with the extra leading Bengali needs.
+   Scoped to .reader so it wins over the card's own font-size/line-height. */
+.reader .verse-translation[lang="bn"] {
+    font-family: var(--font-bengali);
+    font-size: 1.05rem;
+    line-height: 1.95;
+}

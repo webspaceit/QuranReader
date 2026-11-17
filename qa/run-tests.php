@@ -136,6 +136,17 @@ check('session cookie is HttpOnly + SameSite', str_contains($h, 'httponly') && s
 
 $css = (string) file_get_contents($root . '/public_html/assets/css/app.css');
 check('fonts are self-hosted', str_contains($css, '@font-face') && str_contains($css, 'amiri-quran-arabic.woff2'));
+
+// Bengali typography: Hind Siliguri, self-hosted, Bengali unicode-range only.
+foreach ([400, 600, 700] as $weight) {
+    check(
+        "hind siliguri woff2 present ({$weight})",
+        is_file($root . "/public_html/assets/fonts/hind-siliguri-bengali-{$weight}.woff2")
+        && str_contains($css, "hind-siliguri-bengali-{$weight}.woff2")
+    );
+}
+check('hind siliguri limited to bengali code points', str_contains($css, 'U+0980-09FE'));
+check('bengali text maps to hind siliguri', (bool) preg_match('/:lang\(bn\)[^}]*font-family:\s*var\(--font-bengali\)/', $css));
 check('audio uses the public CDN', str_contains((string) file_get_contents($root . '/app/config/config.php'), 'cdn.islamic.network'));
 
 $r = call('GET', '/surah.php?n=2');
