@@ -142,7 +142,7 @@ $isAdmin     = \Quran\Auth\Auth::isAdmin();
     <div class="container footer-inner">
         <div class="footer-col">
             <div class="footer-brand"><?= e($appName) ?></div>
-            <p class="muted small"><?= e($site['footer_tagline'] ?? '') ?></p>
+            <p class="muted small"><?= \Quran\Repositories\SiteSettingsRepository::inline((string) ($site['footer_tagline'] ?? '')) ?></p>
         </div>
         <div class="footer-col">
             <div class="footer-heading">Explore</div>
@@ -174,9 +174,9 @@ $isAdmin     = \Quran\Auth\Auth::isAdmin();
     </div>
     <div class="container footer-bottom">
         <span class="muted small">
-            © <?= e($year) ?> <?= e($site['footer_copyright_holder'] ?? $appName) ?>.
+            © <?= e($year) ?> <?= \Quran\Repositories\SiteSettingsRepository::inline((string) ($site['footer_copyright_holder'] ?? $appName)) ?>.
             <?php if (($site['footer_note'] ?? '') !== ''): ?>
-                <?= e($site['footer_note']) ?>
+                <?= \Quran\Repositories\SiteSettingsRepository::inline((string) $site['footer_note']) ?>
             <?php endif; ?>
         </span>
         <span class="muted small">

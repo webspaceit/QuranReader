@@ -49,7 +49,8 @@ $yearValue = (string) ($site['footer_copyright_year'] ?? 'auto');
                 <label for="footer-holder">Copyright holder</label>
                 <input id="footer-holder" type="text" name="footer_copyright_holder" maxlength="120" required
                        value="<?= e($site['footer_copyright_holder'] ?? '') ?>">
-                <p class="field-hint">Just the name — the © symbol and the year are added for you.</p>
+                <p class="field-hint">Just the name — the © and the year are added for you. One link is allowed,
+                    e.g. <code>Quran Reader. Developed by &lt;a href="https://example.com"&gt;Example&lt;/a&gt;</code>.</p>
             </div>
 
             <div class="field">
@@ -75,9 +76,9 @@ $yearValue = (string) ($site['footer_copyright_year'] ?? 'auto');
 
             <div class="admin-preview" aria-live="polite">
                 <span class="admin-preview-label">Preview</span>
-                <p class="admin-preview-tagline"><?= e($site['footer_tagline'] ?? '') ?></p>
+                <p class="admin-preview-tagline"><?= \Quran\Repositories\SiteSettingsRepository::inline((string) ($site['footer_tagline'] ?? '')) ?></p>
                 <p class="muted small">
-                    © <?= e($year) ?> <?= e($site['footer_copyright_holder'] ?? '') ?>.
+                    © <?= e($year) ?> <?= \Quran\Repositories\SiteSettingsRepository::inline((string) ($site['footer_copyright_holder'] ?? '')) ?>.
                     <?php if (($site['footer_note'] ?? '') !== ''): ?>
                         <?= e($site['footer_note']) ?>
                     <?php endif; ?>
