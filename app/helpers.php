@@ -44,8 +44,20 @@ function base_path(): string
     $docRoot = realpath((string) $_SERVER['DOCUMENT_ROOT']);
 
     if ($public !== false && $docRoot !== false && strpos($public, $docRoot) === 0) {
-        $sub = str_replace('\\', '/', substr($public, strlen($docRoot)));
-        return $cached = rtrim($sub, '/');
+        $sub = rtrim(str_replace('\\', '/', substr($public, strlen($docRoot))), '/');
+
+        // Some hosts point the domain at public_html/ but report the account root
+        // as DOCUMENT_ROOT, then rewrite the "/public_html" prefix away. The
+        // request URI says which shape is real: if the incoming URL does not
+        // carry the prefix, emitting it would make every link redirect. That also
+        // breaks PWA installability, because the manifest scope (and therefore
+        // start_url) would redirect to a URL outside the declared scope.
+        $requestPath = (string) (parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?? '');
+        if ($sub !== '' && $requestPath !== '' && $requestPath !== $sub && strpos($requestPath, $sub . '/') !== 0) {
+            return $cached = '';
+        }
+
+        return $cached = $sub;
     }
 
     // Fallback: derive from the running script (works for /index.php style URLs).
