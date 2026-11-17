@@ -1448,3 +1448,9 @@ body.has-install-bar { padding-bottom: 6.5rem; }
     word-spacing: 0.01em;
 }
 .verse-note[lang="bn"] { line-height: 1.9; }
+
+/* The reader's floating player already owns the bottom-centre slot, so lift the
+   install bar above it instead of stacking the two on top of each other. */
+body:has(.player) .install-bar {
+    bottom: calc(6.9rem + env(safe-area-inset-bottom, 0px));
+}

@@ -293,6 +293,7 @@
     // explicit "Install app" button in Settings, and iOS instructions because
     // Safari never fires beforeinstallprompt.
     var DISMISS_KEY = 'quran.installDismissedAt';
+    var SHOWN_KEY = 'quran.installPromptShown';
     var DISMISS_DAYS = 14;
 
     function isStandalone() {
@@ -321,10 +322,57 @@
         }
     }
 
-    function showBanner() {
+    function isAndroid() {
+        return /android/i.test(window.navigator.userAgent);
+    }
+
+    /**
+     * Banner copy depends on what the browser actually offers:
+     *  - a real beforeinstallprompt event → one-tap Install
+     *  - iOS Safari → no event is ever fired, Share sheet instructions
+     *  - Chrome/Edge desktop → no automatic banner any more, menu instructions
+     */
+    function installCopy() {
+        if (state.installEvent) {
+            return {
+                title: 'Install the app',
+                body: 'One-tap access to the reader, including offline surahs.',
+                cta: 'Install'
+            };
+        }
+        if (isIos()) {
+            return {
+                title: 'Add to Home Screen',
+                body: 'Tap Share, then "Add to Home Screen".',
+                cta: 'Got it'
+            };
+        }
+        if (isAndroid()) {
+            return {
+                title: 'Install the app',
+                body: 'Open the Chrome menu, then "Add to Home screen".',
+                cta: 'Got it'
+            };
+        }
+        return {
+            title: 'Install the app',
+            body: 'Open the browser menu and choose "Install page as app" (older builds say "Add to Home screen").',
+            cta: 'Got it'
+        };
+    }
+
+    function showBanner(upgrade) {
         if (isStandalone() || dismissedRecently() || document.getElementById('installBar')) {
             return;
         }
+        // One offer per tab: the reader should not be nagged on every navigation.
+        // `upgrade` re-shows it when the real prompt arrives after the hint.
+        try {
+            if (!upgrade && window.sessionStorage.getItem(SHOWN_KEY) === '1') {
+                return;
+            }
+            window.sessionStorage.setItem(SHOWN_KEY, '1');
+        } catch (error) { /* private mode */ }
 
         var bar = document.createElement('div');
         bar.id = 'installBar';
@@ -341,20 +389,16 @@
         text.className = 'install-bar-text';
         var strong = document.createElement('strong');
         var span = document.createElement('span');
-        if (state.installEvent) {
-            strong.textContent = 'Install the app';
-            span.textContent = 'One-tap access to the reader, including offline surahs.';
-        } else {
-            strong.textContent = 'Add to Home Screen';
-            span.textContent = 'Tap Share, then "Add to Home Screen".';
-        }
+        var copy = installCopy();
+        strong.textContent = copy.title;
+        span.textContent = copy.body;
         text.appendChild(strong);
         text.appendChild(span);
 
         var primary = document.createElement('button');
         primary.type = 'button';
         primary.className = 'install-bar-primary';
-        primary.textContent = state.installEvent ? 'Install' : 'Got it';
+        primary.textContent = copy.cta;
         primary.addEventListener('click', function () {
             if (!state.installEvent) {
                 dismissBanner();
@@ -398,7 +442,13 @@
             if (button) {
                 button.hidden = false;
             }
-            window.setTimeout(showBanner, 4000);
+            // If the instructions banner is already up, swap it for the real
+            // one-tap Install without waiting for the next visit.
+            var existing = document.getElementById('installBar');
+            if (existing) {
+                existing.remove();
+            }
+            window.setTimeout(function () { showBanner(true); }, 4000);
         });
 
         window.addEventListener('appinstalled', function () {
@@ -429,10 +479,18 @@
             });
         }
 
-        // Safari never fires beforeinstallprompt, so offer the instructions
-        // once the reader has had a look around.
-        if (!isStandalone() && isIos()) {
-            window.setTimeout(showBanner, 6000);
+        // Never rely on beforeinstallprompt alone. Safari never fires it, and
+        // Chrome desktop stopped showing an automatic install banner entirely
+        // (the affordance lives in the browser menu), so a reader who is never
+        // told the app can be installed simply never installs it. Offer the
+        // manual route after a short dwell; if the real event arrives it
+        // replaces this hint.
+        if (!isStandalone()) {
+            window.setTimeout(function () {
+                if (!state.installEvent) {
+                    showBanner();
+                }
+            }, isIos() ? 6000 : 8000);
         }
     }
     function initPanel() {
