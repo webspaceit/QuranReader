@@ -16,7 +16,7 @@
  */
 'use strict';
 
-var CACHE_VERSION = 'v4';
+var CACHE_VERSION = 'v5';
 var STATIC_CACHE = 'quran-static-' + CACHE_VERSION;
 var PAGE_CACHE = 'quran-pages-' + CACHE_VERSION;
 var API_CACHE = 'quran-api-' + CACHE_VERSION;
@@ -27,7 +27,6 @@ var SHELL = [
     './',
     'offline.php',
     'settings.php',
-    'manifest.webmanifest',
     'assets/css/app.css',
     'assets/css/sanctuary.css',
     'assets/css/reader-sanctuary.css',
@@ -151,6 +150,12 @@ self.addEventListener('fetch', function (event) {
     }
 
     // Recitation audio is streamed; caching it is explicitly out of scope.
+    // The manifest carries the reader's splash colour, so it must not be cached.
+    if (url.pathname.endsWith('/manifest.php')) {
+        event.respondWith(fetch(request));
+        return;
+    }
+
     if (/\.mp3$/i.test(url.pathname)) {
         return;
     }

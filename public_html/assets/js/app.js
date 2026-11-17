@@ -228,6 +228,10 @@
         }
         root.setAttribute('data-theme', resolved);
         root.setAttribute('data-theme-preference', pref);
+        // The manifest reads this to pick the launch splash colour.
+        try {
+            document.cookie = 'quran_theme=' + resolved + '; path=/; max-age=31536000; samesite=lax';
+        } catch (e) { /* ignore */ }
         store.setString('theme', pref);
         syncThemeLabel();
         if (AUTHED) {

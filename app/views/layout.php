@@ -50,11 +50,32 @@ $isAdmin     = \Quran\Auth\Auth::isAdmin();
     <meta property="og:url" content="<?= e($canonical) ?>">
     <link rel="icon" href="<?= e(u('assets/img/favicon.svg')) ?>" type="image/svg+xml">
     <link rel="apple-touch-icon" href="<?= e(u('assets/img/apple-touch-icon.png')) ?>">
-    <link rel="manifest" href="<?= e(u('manifest.webmanifest')) ?>">
+    <link rel="manifest" href="<?= e(u('manifest.php')) ?>">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="<?= e($appName) ?>">
     <meta name="application-name" content="<?= e($appName) ?>">
+    <script>
+        /* Resolve the theme before the first paint. theme.js does the same, but it
+           is a separate request: on a cold start of the installed app the browser
+           can paint the light tokens while it is still in flight, which reads as a
+           white blink against a dark reader. */
+        (function () {
+            var root = document.documentElement;
+            var pref = '';
+            try { pref = window.localStorage.getItem('quran.theme') || ''; } catch (e) { /* storage blocked */ }
+            pref = pref || root.getAttribute('data-theme') || 'system';
+            var dark = pref === 'dark' || (pref !== 'light'
+                && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            root.setAttribute('data-theme', dark ? 'dark' : 'light');
+            root.setAttribute('data-theme-preference', pref);
+            /* The manifest builds its splash colour from this cookie. */
+            try {
+                document.cookie = 'quran_theme=' + (dark ? 'dark' : 'light')
+                    + '; path=/; max-age=31536000; samesite=lax';
+            } catch (e) { /* ignore */ }
+        })();
+    </script>
     <link rel="stylesheet" href="<?= e(asset_url('assets/css/app.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset_url('assets/css/sanctuary.css')) ?>">
 <?php foreach ($pageStyles as $style): ?>

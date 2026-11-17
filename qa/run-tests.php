@@ -284,6 +284,31 @@ check('offline page is self-contained (no app css/js)', !str_contains($r['body']
 
 $r = call('GET', '/settings.php');
 check('settings links the manifest', str_contains($r['body'], 'rel="manifest"'));
+
+// The launch splash must follow the reader's theme, and the theme must be
+// resolved before any stylesheet can paint.
+$r = call('GET', '/manifest.php');
+check('manifest endpoint is served', $r['status'] === 200, (string) $r['status']);
+$dyn = json_decode($r['body'], true);
+check('manifest endpoint returns the same app', is_array($dyn) && ($dyn['start_url'] ?? '') === './'
+    && count($dyn['icons'] ?? []) === 3);
+check('manifest splash follows the theme (light default)',
+    ($dyn['background_color'] ?? '') === '#fbf9f4', (string) ($dyn['background_color'] ?? ''));
+$probe = escapeshellarg($php) . ' ' . escapeshellarg($root . '/qa/manifest-probe.php') . ' dark';
+$darkRaw = (string) shell_exec($probe);
+$dynDark = json_decode($darkRaw, true);
+check('manifest splash follows the theme (dark cookie)',
+    ($dynDark['background_color'] ?? '') === '#0f1512'
+    && ($dynDark['theme_color'] ?? '') === '#0f1512',
+    (string) ($dynDark['background_color'] ?? ''));
+// A separate variable on purpose: $r still holds the settings page the two
+// checks below read.
+$home = call('GET', '/');
+check('theme is resolved before the first stylesheet',
+    strpos($home['body'], 'quran_theme=') < strpos($home['body'], 'assets/css/app.css'), 'inline prepaint order');
+check('page links the theme-aware manifest', str_contains($home['body'], 'manifest.php'));
+
+$r = call('GET', '/settings.php');
 check('settings offers the offline download', str_contains($r['body'], 'data-offline-download'));
 check('layout registers the pwa script', str_contains($r['body'], 'assets/js/pwa.js'));
 // api() must not prefix BASE onto server-built (u()) paths, or every form post
