@@ -361,6 +361,38 @@ input[type="search"], select, textarea {
 .deck-actions, .deck-icons { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
 .deck-icons .mini-btn { width: 2.25rem; height: 2.25rem; border-radius: 10px; }
 
+/* On phones the header search field is hidden, so the hero deck swaps its
+   search icon for a real search box with the same surah dropdown. */
+.deck-search { display: none; position: relative; flex: 1 1 100%; }
+.deck-search input[type="search"] {
+    min-height: 44px; font-size: .88rem;
+    background: var(--surface);
+    padding-left: 2.5rem; border-radius: 10px;
+}
+.deck-search .search-icon { left: .85rem; }
+
+@media (max-width: 899px) {
+    .deck-search { display: block; }
+    .deck-icons .deck-search-btn { display: none; }
+}
+
+/* Phones: the primary action and the search box each take a full line, while
+   the Mushaf button and the bookmark icon share the row between them. */
+@media (max-width: 640px) {
+    .action-deck {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: .5rem;
+    }
+    .deck-actions, .deck-icons { display: contents; }
+    .deck-actions .btn-primary,
+    .continue-slot,
+    .deck-search { grid-column: 1 / -1; }
+    .deck-actions .btn-ghost { grid-column: 1; }
+    .deck-icons .mini-btn { grid-column: 2; }
+}
+
 .side-stack { display: flex; flex-direction: column; gap: .9rem; }
 
 .ayah-card {

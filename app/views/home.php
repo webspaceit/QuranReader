@@ -147,10 +147,17 @@ $placeLabel = static fn(string $place): string => $place === 'madinah' ? 'Madina
                         <a class="mini-btn" href="<?= e(u('bookmarks.php')) ?>" title="Bookmarks and notes" aria-label="Bookmarks and notes">
                             <?= icon('bookmark', 'ico', 16) ?>
                         </a>
-                        <a class="mini-btn" href="<?= e(u('search.php')) ?>" title="Search the Quran" aria-label="Search the Quran">
+                        <a class="mini-btn deck-search-btn" href="<?= e(u('search.php')) ?>" title="Search the Quran" aria-label="Search the Quran">
                             <?= icon('search', 'ico', 16) ?>
                         </a>
                     </div>
+
+                    <form class="deck-search" action="<?= e(u('search.php')) ?>" method="get" role="search" data-surah-picker>
+                        <label class="visually-hidden" for="deck-q">Search the Quran</label>
+                        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.2 4.2"/></svg>
+                        <input id="deck-q" type="search" name="q" placeholder="Search a surah or ayah"
+                               autocomplete="off" enterkeyhint="search" aria-autocomplete="list" aria-expanded="false">
+                    </form>
                 </div>
             </div>
 
