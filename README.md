@@ -134,6 +134,30 @@ and each of those folders also contains an `.htaccess` deny-all as a second line
 
 ---
 
+## Where the app expects to live
+
+The web server's document root must contain the **contents** of `public_html/`,
+with `app/`, `bin/`, `storage/` and `database/` one level above it:
+
+```
+/srv/quran/            <- not web-accessible
+├── app/ bin/ storage/ database/ vendor/
+└── public_html/       <- document root
+```
+
+If a host insists on another layout — for example the domain points at the
+project folder and `/public_html` is rewritten away — pin the prefix instead:
+
+```dotenv
+APP_BASE=/        # the domain root IS the app
+APP_BASE=/quran   # the app really lives in a sub-directory
+```
+
+Leaving `APP_BASE` unset detects the prefix from the filesystem, which is right
+for a normal deployment. Get it wrong and every link, asset, API call and the
+service worker picks up an extra path segment: GETs still work if the host
+redirects, but form POSTs and the service worker do not.
+
 ## Super admin
 
 The owner account reaches `admin.php` (footer + copyright). Two ways to nominate it:

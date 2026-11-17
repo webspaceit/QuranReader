@@ -26,6 +26,16 @@ function base_path(): string
         return $cached;
     }
 
+    // Explicit override first. Some hosts serve the app from the directory above
+    // the web root and rewrite a "/public_html" prefix away, which makes the
+    // layout undetectable and leaves every emitted URL one segment too long.
+    // APP_BASE=/ forces the domain root; APP_BASE=/quran for a real subdirectory.
+    $configured = Config::get('app.base');
+    if ($configured !== null && $configured !== '') {
+        $value = '/' . trim((string) $configured, '/');
+        return $cached = ($value === '/' ? '' : $value);
+    }
+
     if (PHP_SAPI === 'cli' || empty($_SERVER['DOCUMENT_ROOT'])) {
         return $cached = '';
     }

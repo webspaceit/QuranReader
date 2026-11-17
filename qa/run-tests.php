@@ -438,6 +438,13 @@ check('typeface scale and leading are per face',
     substr_count($cssNow, 'data-arabic-font="') >= 3
     && substr_count($cssNow, '--reader-arabic-leading') >= 4
     && str_contains($cssNow, '--arabic-size: calc(var(--arabic-base) * var(--arabic-scale))'));
+// APP_BASE pins the URL prefix when the host layout cannot be detected.
+$probe = escapeshellarg($php) . ' ' . escapeshellarg($root . '/qa/base-probe.php') . ' ';
+check('APP_BASE=/ pins the domain root',
+    trim((string) shell_exec($probe . escapeshellarg('/') . ' 2>&1')) === '/login.php');
+check('APP_BASE=/quran pins a sub-directory',
+    trim((string) shell_exec($probe . escapeshellarg('/quran') . ' 2>&1')) === '/quran/login.php');
+
 check('migration script covers settings columns',
     is_file($root . '/bin/migrate.php')
     && str_contains((string) file_get_contents($root . '/database/schema.sql'), '`arabic_font` VARCHAR(24)'));

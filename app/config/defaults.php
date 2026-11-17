@@ -23,6 +23,8 @@ return [
         // Optional: an email that is always treated as the super admin, even
         // before the is_admin flag is set. env: APP_ADMIN_EMAIL
         'admin_email' => '',
+        // null = detect from the filesystem; '/' = domain root; '/sub' = prefix.
+        'base'        => null,
     ],
 
     'database' => [

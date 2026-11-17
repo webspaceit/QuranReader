@@ -181,6 +181,7 @@ final class Config
             'APP_TIMEZONE'    => ['app.timezone', 'string'],
             'APP_LOCALE'      => ['app.locale', 'string'],
             'APP_ADMIN_EMAIL' => ['app.admin_email', 'string'],
+            'APP_BASE'        => ['app.base', 'string'],
 
             // Database
             'DB_HOST'         => ['database.host', 'string'],
