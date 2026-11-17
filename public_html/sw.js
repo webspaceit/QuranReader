@@ -16,7 +16,7 @@
  */
 'use strict';
 
-var CACHE_VERSION = 'v3';
+var CACHE_VERSION = 'v4';
 var STATIC_CACHE = 'quran-static-' + CACHE_VERSION;
 var PAGE_CACHE = 'quran-pages-' + CACHE_VERSION;
 var API_CACHE = 'quran-api-' + CACHE_VERSION;
@@ -48,7 +48,11 @@ var SHELL = [
     'assets/fonts/plus-jakarta-sans-latin.woff2',
     'assets/fonts/hind-siliguri-bengali-400.woff2',
     'assets/fonts/hind-siliguri-bengali-600.woff2',
-    'assets/fonts/hind-siliguri-bengali-700.woff2'
+    'assets/fonts/hind-siliguri-bengali-700.woff2',
+    'assets/fonts/scheherazade-arabic-400.woff2',
+    'assets/fonts/scheherazade-arabic-700.woff2',
+    'assets/fonts/noto-naskh-arabic-400.woff2',
+    'assets/fonts/nastaliq-arabic-400.woff2'
 ];
 
 function scoped(path) {

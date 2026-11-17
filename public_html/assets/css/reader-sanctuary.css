@@ -30,23 +30,33 @@
     background: color-mix(in srgb, var(--paper) 92%, transparent);
     border-bottom: 1px solid var(--hairline);
 }
+
 .reader .reader-toolbar::before {
     background: color-mix(in srgb, var(--paper) 70%, transparent);
 }
-.reader .reader-toolbar-inner { max-width: calc(var(--container) - 2.3rem); }
+
+.reader .reader-toolbar-inner {
+    max-width: calc(var(--container) - 2.3rem);
+}
+
 .reader .jump-form select,
 .reader .btn {
     border-radius: 0.75rem;
     border-color: var(--hairline);
     background: var(--card);
 }
+
 .reader .font-controls {
     background: var(--paper-deep);
     border: 1px solid var(--hairline);
     border-radius: 0.85rem;
     padding: 0.15rem;
 }
-.reader .font-btn { border-radius: 0.65rem; }
+
+.reader .font-btn {
+    border-radius: 0.65rem;
+}
+
 .reader .font-btn.is-active {
     background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
     color: #23200f;
@@ -70,6 +80,7 @@
         0 0 0 6px rgba(197, 160, 89, 0.32),
         0 28px 60px -34px rgba(0, 47, 38, 0.65);
 }
+
 .reader .surah-header::before,
 .reader .surah-header::after {
     content: "";
@@ -77,25 +88,33 @@
     pointer-events: none;
     border-radius: 1rem;
 }
+
 .reader .surah-header::before {
     inset: 0.7rem;
     border: 1px solid rgba(197, 160, 89, 0.38);
 }
+
 .reader .surah-header::after {
     inset: 0.95rem;
     border: 1px dashed rgba(197, 160, 89, 0.22);
     border-radius: 0.8rem;
 }
+
 .reader .surah-header-top {
     position: relative;
     z-index: 1;
     flex-direction: column;
     gap: 0.35rem;
 }
+
 .reader .surah-badge {
     display: none;
 }
-.reader .surah-titles { text-align: center; }
+
+.reader .surah-titles {
+    text-align: center;
+}
+
 .reader .surah-title-ar {
     margin: 0;
     font-size: clamp(2rem, 5vw, 2.55rem);
@@ -106,14 +125,21 @@
     color: transparent;
     filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.45));
 }
+
 .reader .surah-title-en {
     margin: 0.15rem 0 0;
     color: #f2efe6;
     font-size: 1.02rem;
     letter-spacing: 0.01em;
 }
-.reader .surah-title-en .muted { color: rgba(245, 243, 238, 0.66); }
-.reader .surah-title-en .dot { color: var(--gold); }
+
+.reader .surah-title-en .muted {
+    color: rgba(245, 243, 238, 0.66);
+}
+
+.reader .surah-title-en .dot {
+    color: var(--gold);
+}
 
 .reader .surah-meta-list {
     position: relative;
@@ -128,6 +154,7 @@
     color: rgba(245, 243, 238, 0.82);
     font-size: 0.78rem;
 }
+
 /* The base stylesheet paints each meta item as a cream pill; on the dark
    cartouche that made the cream value text invisible (1.0:1). Drop the pill
    and keep the light-on-emerald text. */
@@ -138,13 +165,17 @@
     padding: 0;
     color: rgba(247, 245, 239, 0.92);
 }
+
 .reader .surah-meta-list .meta-label {
     color: var(--gold-light);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-size: 0.62rem;
 }
-.reader .surah-meta-list .muted { color: rgba(245, 243, 238, 0.55); }
+
+.reader .surah-meta-list .muted {
+    color: rgba(245, 243, 238, 0.55);
+}
 
 .reader .surah-header-actions {
     position: relative;
@@ -152,16 +183,19 @@
     justify-content: center;
     margin-top: 1.15rem;
 }
+
 .reader .surah-header-actions .btn-primary {
     background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
     color: #23200f;
     border-color: rgba(197, 160, 89, 0.6);
 }
+
 .reader .surah-header-actions .btn-ghost {
     background: rgba(255, 255, 255, 0.06);
     border-color: rgba(197, 160, 89, 0.45);
     color: #f2efe6;
 }
+
 .reader .surah-header-actions .btn-ghost:hover {
     background: rgba(255, 255, 255, 0.12);
 }
@@ -175,6 +209,7 @@
     color: var(--emerald-2);
     line-height: 2;
 }
+
 .reader .basmala::before,
 .reader .basmala::after {
     content: "";
@@ -193,27 +228,32 @@
     display: grid;
     gap: 1rem;
 }
+
 .reader .verse {
     display: flex;
     flex-direction: column;
-    padding: 1rem 1.2rem 1.05rem;
+    padding: 0.5rem 1rem 1.05rem;
     background: var(--card);
     border: 1px solid var(--hairline);
     border-radius: 1.1rem;
     box-shadow: 0 1px 2px rgba(0, 47, 38, 0.05), 0 14px 30px -26px rgba(0, 47, 38, 0.5);
 }
-.reader .verse:last-child { border-bottom: 1px solid var(--hairline); }
+
+.reader .verse:last-child {
+    border-bottom: 1px solid var(--hairline);
+}
 
 /* Action row becomes the card header: medallion left, icons right */
 .reader .verse-actions {
     order: -1;
     max-width: none;
-    margin: 0 0 0.8rem;
+    margin: 0 0 1.1rem;
     padding-bottom: 0.6rem;
     border-bottom: 1px solid rgba(197, 160, 89, 0.18);
     opacity: 1;
     gap: 0.1rem;
 }
+
 .reader .verse-ref {
     order: -1;
     margin-right: auto;
@@ -233,24 +273,33 @@
     background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
     box-shadow: 0 2px 6px rgba(158, 122, 51, 0.32), inset 0 0 0 2px rgba(255, 255, 255, 0.85);
 }
+
 .reader .verse-actions .icon-btn {
     color: var(--ink-soft);
     border-radius: 0.6rem;
 }
+
 .reader .verse-actions .icon-btn:hover {
     background: rgba(197, 160, 89, 0.14);
     color: var(--emerald-2);
 }
 
-.reader .verse-main { max-width: none; margin: 0; }
+.reader .verse-main {
+    max-width: none;
+    margin: 0;
+}
+
 .reader .verse-arabic {
     padding: 0.15rem 0 0.35rem;
     color: #10382d;
-    line-height: 2.2;
+    /* Amiri Quran is drawn tight; taller faces (Nastaliq especially) need the
+       extra leading or their stacked marks collide. */
+    line-height: 1.8;
 }
+
 .reader .verse-translation {
     margin: 0.75rem 0 0;
-    padding: 0.85rem 1rem;
+    padding: 0.06rem 1rem;
     max-width: none;
     background: var(--paper-deep);
     border: 1px solid rgba(197, 160, 89, 0.2);
@@ -259,6 +308,7 @@
     font-size: 1rem;
     line-height: 1.7;
 }
+
 .reader .ayah-marker {
     /* verse-end medallion, gold like the mock */
     display: inline-flex;
@@ -281,7 +331,10 @@
    protruded around the border and read as a stray dark bar at the left edge on
    hover / while playing, and highlight tints only leaked out as slivers.
    Re-express every state on the card surface instead. */
-.reader .verse::before { display: none; }
+.reader .verse::before {
+    display: none;
+}
+
 .reader .verse::after {
     left: 0;
     top: 0.9rem;
@@ -298,6 +351,7 @@
         box-shadow: 0 2px 4px rgba(0, 47, 38, 0.06), 0 18px 34px -24px rgba(0, 47, 38, 0.5);
     }
 }
+
 .reader .verse:focus-within {
     border-color: color-mix(in srgb, var(--emerald-2) 45%, transparent);
     box-shadow: 0 0 0 3px rgba(13, 71, 59, 0.1);
@@ -308,7 +362,10 @@
     background: color-mix(in srgb, var(--hl) 10%, var(--card));
     border-color: color-mix(in srgb, var(--hl) 45%, transparent);
 }
-.reader .verse[data-highlight]::after { opacity: 1; }
+
+.reader .verse[data-highlight]::after {
+    opacity: 1;
+}
 
 /* Currently reciting: gilded aura instead of a flat tint */
 .reader .verse.is-playing {
@@ -317,7 +374,10 @@
         0 0 0 1.5px rgba(197, 160, 89, 0.55),
         0 18px 36px -18px rgba(13, 71, 59, 0.35);
 }
-.reader .verse.is-playing::after { opacity: 1; }
+
+.reader .verse.is-playing::after {
+    opacity: 1;
+}
 
 /* Notes keep their card but pick up the gold hairline */
 .reader .verse-note {
@@ -357,23 +417,54 @@
     --ink-soft: #b6bdb7;
     --hairline: rgba(197, 160, 89, 0.22);
 }
-:root[data-theme="dark"] .reader .verse-arabic { color: #eef2ec; }
+
+:root[data-theme="dark"] .reader .verse-arabic {
+    color: #eef2ec;
+}
+
 :root[data-theme="dark"] .reader .verse-translation {
     background: #101714;
     border-color: rgba(197, 160, 89, 0.18);
     color: #b6bdb7;
 }
-:root[data-theme="dark"] .reader .basmala { color: var(--gold-light); }
-:root[data-theme="dark"] .reader .verse-ref { color: #23200f; }
+
+:root[data-theme="dark"] .reader .basmala {
+    color: var(--gold-light);
+}
+
+:root[data-theme="dark"] .reader .verse-ref {
+    color: #23200f;
+}
 
 /* --------------------------------------------------------------- mobile --- */
 @media (max-width: 640px) {
-    .reader { padding-bottom: 10.5rem; }
-    .reader .surah-header { border-radius: 1.15rem; margin-top: 1rem; }
-    .reader .verse { padding: 0.85rem 0.9rem 0.95rem; border-radius: 0.95rem; }
-    .reader .verse-arabic { line-height: 2.05; }
-    .reader .verse-translation { padding: 0.75rem 0.8rem; font-size: 0.95rem; }
-    .reader .surah-meta-list { gap: 0.4rem 0.8rem; font-size: 0.72rem; }
+    .reader {
+        padding-bottom: 10.5rem;
+    }
+
+    .reader .surah-header {
+        border-radius: 1.15rem;
+        margin-top: 1rem;
+    }
+
+    .reader .verse {
+        padding: 0.85rem 0.9rem 0.95rem;
+        border-radius: 0.95rem;
+    }
+
+    .reader .verse-arabic {
+        line-height: 2.05;
+    }
+
+    .reader .verse-translation {
+        padding: 0.75rem 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .reader .surah-meta-list {
+        gap: 0.4rem 0.8rem;
+        font-size: 0.72rem;
+    }
 }
 
 /* Page frames follow the header container, so the cartouche, verses, basmala
@@ -399,6 +490,7 @@
     order: -1;
     margin: -0.1rem 0 0.65rem;
 }
+
 .reader .highlight-swatches {
     background: var(--card);
     border-color: rgba(197, 160, 89, 0.4);

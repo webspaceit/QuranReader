@@ -1,6 +1,7 @@
 /**
- * Applies the saved theme and Arabic text size before first paint, so there is
- * no flash of the wrong colour scheme. Deliberately tiny and dependency-free.
+ * Applies the saved theme, Arabic text size and Quran typeface before first
+ * paint, so there is no flash of the wrong colours or the wrong script.
+ * Deliberately tiny and dependency-free.
  */
 (function () {
     'use strict';
@@ -8,7 +9,9 @@
     var root = document.documentElement;
     var KEY_THEME = 'quran.theme';
     var KEY_SIZE = 'quran.fontSize';
+    var KEY_FONT = 'quran.arabicFont';
     var SIZES = ['small', 'medium', 'large', 'xlarge'];
+    var FONTS = ['amiri-quran', 'scheherazade', 'noto-naskh', 'nastaliq'];
 
     function meta(name) {
         var el = document.querySelector('meta[name="' + name + '"]');
@@ -40,9 +43,18 @@
         size = 'medium';
     }
 
+    // Quran typeface: same precedence as the theme — this browser first, then
+    // the account, then the default. Set before first paint to avoid a swap.
+    var storedFont = read(KEY_FONT);
+    var arabicFont = storedFont || meta('server-arabic-font') || 'amiri-quran';
+    if (FONTS.indexOf(arabicFont) === -1) {
+        arabicFont = 'amiri-quran';
+    }
+
     root.setAttribute('data-theme', resolve(themePref));
     root.setAttribute('data-theme-preference', themePref);
     root.setAttribute('data-font-size', size);
+    root.setAttribute('data-arabic-font', arabicFont);
 
     if (!storedTheme && authed && meta('server-theme')) {
         try {
@@ -52,6 +64,11 @@
     if (!storedSize && authed && meta('server-font-size')) {
         try {
             window.localStorage.setItem(KEY_SIZE, meta('server-font-size'));
+        } catch (e) { /* ignore */ }
+    }
+    if (!storedFont && authed && meta('server-arabic-font')) {
+        try {
+            window.localStorage.setItem(KEY_FONT, meta('server-arabic-font'));
         } catch (e) { /* ignore */ }
     }
 

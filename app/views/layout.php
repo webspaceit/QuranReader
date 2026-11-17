@@ -23,7 +23,8 @@ $activeNav   = $activeNav ?? '';
 $year        = date('Y');
 ?>
 <!doctype html>
-<html lang="en" data-theme="<?= e($settings['theme'] ?? 'system') ?>" data-font-size="<?= e($settings['arabic_font_size'] ?? 'medium') ?>" data-playing-style="<?= e($settings['playing_style'] ?? 'card') ?>">
+<html lang="en" data-theme="<?= e($settings['theme'] ?? 'system') ?>" data-font-size="<?= e($settings['arabic_font_size'] ?? 'medium') ?>" data-playing-style="<?= e($settings['playing_style'] ?? 'card') ?>"
+      data-arabic-font="<?= e($settings['arabic_font'] ?? 'amiri-quran') ?>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -36,6 +37,7 @@ $year        = date('Y');
     <meta name="app-base" content="<?= e(base_path()) ?>">
     <meta name="authed" content="<?= $currentUser ? '1' : '0' ?>">
     <meta name="server-theme" content="<?= e($settings['theme'] ?? 'system') ?>">
+    <meta name="server-arabic-font" content="<?= e($settings['arabic_font'] ?? 'amiri-quran') ?>">
     <meta name="server-font-size" content="<?= e($settings['arabic_font_size'] ?? 'medium') ?>">
     <meta name="server-translation" content="<?= e($settings['translation_id'] ?? '') ?>">
     <meta name="server-reciter" content="<?= e($settings['reciter_id'] ?? '') ?>">

@@ -16,9 +16,15 @@ final class SettingsRepository
     public const PLAYING_STYLES = ['card', 'border', 'bar', 'off'];
 
     /**
+     * Quran typefaces offered in Settings. All four are self-hosted and
+     * OFL-licensed; the first is the default.
+     */
+    public const ARABIC_FONTS = ['amiri-quran', 'scheherazade', 'noto-naskh', 'nastaliq'];
+
+    /**
      * User settings merged over the site defaults.
      *
-     * @return array{translation_id:string,reciter_id:string,arabic_font_size:string,theme:string,playing_style:string}
+     * @return array{translation_id:string,reciter_id:string,arabic_font_size:string,theme:string,playing_style:string,arabic_font:string}
      */
     public static function get(int $userId): array
     {
@@ -42,10 +48,13 @@ final class SettingsRepository
             'playing_style'    => in_array($row['playing_style'] ?? '', self::PLAYING_STYLES, true)
                 ? (string) $row['playing_style']
                 : $defaults['playing_style'],
+            'arabic_font'      => in_array($row['arabic_font'] ?? '', self::ARABIC_FONTS, true)
+                ? (string) $row['arabic_font']
+                : $defaults['arabic_font'],
         ];
     }
 
-    /** @return array{translation_id:string,reciter_id:string,arabic_font_size:string,theme:string,playing_style:string} */
+    /** @return array{translation_id:string,reciter_id:string,arabic_font_size:string,theme:string,playing_style:string,arabic_font:string} */
     public static function defaults(): array
     {
         return [
@@ -54,12 +63,13 @@ final class SettingsRepository
             'arabic_font_size' => (string) Config::get('content.default_font_size', 'medium'),
             'theme'            => 'system',
             'playing_style'    => 'card',
+            'arabic_font'      => 'amiri-quran',
         ];
     }
 
     /**
      * @param array<string,string|null> $values
-     * @return array{translation_id:string,reciter_id:string,arabic_font_size:string,theme:string,playing_style:string}
+     * @return array{translation_id:string,reciter_id:string,arabic_font_size:string,theme:string,playing_style:string,arabic_font:string}
      */
     public static function save(int $userId, array $values): array
     {
@@ -80,13 +90,17 @@ final class SettingsRepository
         $playingStyle = isset($values['playing_style']) && in_array($values['playing_style'], self::PLAYING_STYLES, true)
             ? (string) $values['playing_style']
             : $current['playing_style'];
+        $arabicFont = isset($values['arabic_font']) && in_array($values['arabic_font'], self::ARABIC_FONTS, true)
+            ? (string) $values['arabic_font']
+            : $current['arabic_font'];
 
         Database::execute(
-            'INSERT INTO user_settings (user_id, translation_id, reciter_id, arabic_font_size, theme, playing_style)
-             VALUES (?, ?, ?, ?, ?, ?)
+            'INSERT INTO user_settings (user_id, translation_id, reciter_id, arabic_font_size, theme, playing_style, arabic_font)
+             VALUES (?, ?, ?, ?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE translation_id = VALUES(translation_id), reciter_id = VALUES(reciter_id),
-                 arabic_font_size = VALUES(arabic_font_size), theme = VALUES(theme), playing_style = VALUES(playing_style)',
-            [$userId, $translation, $reciter, $fontSize, $theme, $playingStyle]
+                 arabic_font_size = VALUES(arabic_font_size), theme = VALUES(theme), playing_style = VALUES(playing_style),
+                 arabic_font = VALUES(arabic_font)',
+            [$userId, $translation, $reciter, $fontSize, $theme, $playingStyle, $arabicFont]
         );
 
         return [
@@ -95,6 +109,7 @@ final class SettingsRepository
             'arabic_font_size' => $fontSize,
             'theme'            => $theme,
             'playing_style'    => $playingStyle,
+            'arabic_font'      => $arabicFont,
         ];
     }
 }

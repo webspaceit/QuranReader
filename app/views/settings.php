@@ -67,6 +67,8 @@ $themeLabels = ['light' => 'Light', 'dark' => 'Dark', 'system' => 'Match my devi
                 <p class="field-hint">Applies to Quran text everywhere on the site.</p>
             </div>
 
+            <?php require __DIR__ . '/partials/arabic-font-field.php'; ?>
+
             <div class="field">
                 <label for="setting-theme">Theme</label>
                 <select id="setting-theme" name="theme" data-setting="theme">

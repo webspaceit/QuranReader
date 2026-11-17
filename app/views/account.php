@@ -97,6 +97,7 @@ $bookmarkCount = $bookmarkCount ?? 0;
                             <?php endforeach; ?>
                         </select>
                     </div>
+                    <?php require __DIR__ . '/partials/arabic-font-field.php'; ?>
                     <div class="field">
                         <label for="account-theme">Theme</label>
                         <select id="account-theme" name="theme" data-setting="theme">

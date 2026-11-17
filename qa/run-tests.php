@@ -379,6 +379,48 @@ $r = call('POST', '/api/settings/save.php', ['playing_style' => 'nonsense'], $to
 check('unknown reciting style rejected', $r['status'] === 422, (string) $r['status']);
 call('POST', '/api/settings/save.php', ['playing_style' => 'card'], $tok);
 
+// Quran typeface: offered on both preferences surfaces, persisted, applied.
+$r = call('GET', '/settings.php');
+check('settings offers the quran typefaces',
+    str_contains($r['body'], 'name="arabic_font"')
+    && countOf($r['body'], 'data-setting="arabic-font"') === 4);
+check('typeface picker previews each face',
+    countOf($r['body'], 'font-choice-sample') === 4
+    && str_contains($r['body'], 'font-family: &quot;Scheherazade New&quot;'));
+$r = call('POST', '/api/settings/save.php', ['arabic_font' => 'scheherazade'], $tok);
+check('typeface saves', $r['status'] === 200 && ($r['json']['data']['settings']['arabic_font'] ?? '') === 'scheherazade', $r['body']);
+$r = call('GET', '/surah.php?n=1');
+check('typeface is applied before paint', str_contains($r['body'], 'data-arabic-font="scheherazade"')
+    && str_contains($r['body'], '<meta name="server-arabic-font" content="scheherazade">'));
+$r = call('GET', '/account.php');
+check('dashboard reflects the saved typeface',
+    preg_match('/value="scheherazade"[^>]*checked/', $r['body']) === 1);
+$r = call('POST', '/api/settings/save.php', ['arabic_font' => 'comic-sans'], $tok);
+check('unknown typeface rejected', $r['status'] === 422, (string) $r['status']);
+call('POST', '/api/settings/save.php', ['arabic_font' => 'amiri-quran'], $tok);
+
+// The four faces must be self-hosted and wired in both places that matter.
+$cssNow = (string) file_get_contents($root . '/public_html/assets/css/app.css');
+$swNow = (string) file_get_contents($root . '/public_html/sw.js');
+foreach ([
+    'scheherazade-arabic-400.woff2',
+    'scheherazade-arabic-700.woff2',
+    'noto-naskh-arabic-400.woff2',
+    'nastaliq-arabic-400.woff2',
+] as $file) {
+    check("typeface file present: {$file}",
+        is_file($root . '/public_html/assets/fonts/' . $file)
+        && str_contains($cssNow, $file)
+        && str_contains($swNow, $file));
+}
+check('typeface scale and leading are per face',
+    substr_count($cssNow, 'data-arabic-font="') >= 3
+    && substr_count($cssNow, '--reader-arabic-leading') >= 4
+    && str_contains($cssNow, '--arabic-size: calc(var(--arabic-base) * var(--arabic-scale))'));
+check('migration script covers settings columns',
+    is_file($root . '/bin/migrate.php')
+    && str_contains((string) file_get_contents($root . '/database/schema.sql'), '`arabic_font` VARCHAR(24)'));
+
 echo "\n== Highlights and notes ==\n";
 $r = call('POST', '/api/marks/save.php', ['surah' => 2, 'verse' => 255, 'color' => 'yellow'], $tok);
 check('save highlight', $r['status'] === 200 && ($r['json']['data']['mark']['color'] ?? '') === 'yellow', $r['body']);

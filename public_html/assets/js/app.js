@@ -549,9 +549,28 @@
         });
     }
 
+    /** Mirror the effective Quran typeface onto the radio group on the page. */
+    function syncArabicFontChoice() {
+        var current = root.getAttribute('data-arabic-font') || 'amiri-quran';
+        document.querySelectorAll('input[name="arabic_font"]').forEach(function (input) {
+            input.checked = input.value === current;
+        });
+    }
+
     /** @param {HTMLFormElement} form */
     function wireSettingsForm(form) {
         var status = form.querySelector('[data-settings-status]');
+
+        // A typeface is a visual choice, so preview it the moment it is picked.
+        // The value is only written to storage/account on submit, like the other
+        // preferences — leaving without saving puts the old face back.
+        form.addEventListener('change', function (event) {
+            var input = event.target;
+            if (!input || input.name !== 'arabic_font' || !input.checked) {
+                return;
+            }
+            root.setAttribute('data-arabic-font', input.value);
+        });
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
@@ -574,6 +593,10 @@
             }
             if (data.playing_style) {
                 store.setString('playingStyle', applyPlayingStyle(data.playing_style));
+            }
+            if (data.arabic_font) {
+                root.setAttribute('data-arabic-font', data.arabic_font);
+                store.setString('arabicFont', data.arabic_font);
             }
 
             var done = function (message) {
@@ -906,6 +929,9 @@
         // The server already stamped the account value; localStorage wins when
         // this device has a newer choice (guest, or changed before saving).
         applyPlayingStyle(store.getString('playingStyle', root.getAttribute('data-playing-style') || 'card'));
+        // A guest's typeface lives in localStorage only, so the server-rendered
+        // radio would otherwise fall back to the first option.
+        syncArabicFontChoice();
         initDismissableDetails();
         initThemeToggle();
         initHeader();

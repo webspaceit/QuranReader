@@ -3,6 +3,40 @@
    Calm, minimal, mobile-first. Light and dark themes share one set of tokens.
    ========================================================================== */
 
+/* Quran typefaces offered in Settings (all OFL, Arabic subset only). */
+@font-face {
+    font-family: "Scheherazade New";
+    src: url("../fonts/scheherazade-arabic-400.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0898-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+    font-family: "Scheherazade New";
+    src: url("../fonts/scheherazade-arabic-700.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0898-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+    font-family: "Noto Naskh Arabic";
+    src: url("../fonts/noto-naskh-arabic-400.woff2") format("woff2");
+    font-weight: 400 700;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0898-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+    font-family: "Noto Nastaliq Urdu";
+    src: url("../fonts/nastaliq-arabic-400.woff2") format("woff2");
+    font-weight: 400 700;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0898-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
 /* Bengali text — Hind Siliguri (OFL), Bengali subset only. */
 @font-face {
     font-family: "Hind Siliguri";
@@ -96,8 +130,13 @@
     --font-arabic: "Amiri Quran", "Amiri", "Scheherazade New", "Traditional Arabic", "Noto Naskh Arabic", "Times New Roman", serif;
     --font-arabic-ui: "Amiri", "Scheherazade New", "Traditional Arabic", "Noto Naskh Arabic", serif;
 
-    --arabic-size: 1.7rem;
+    /* The size matrix below sets --arabic-base; --arabic-scale is the
+       per-typeface correction (see the Arabic typeface block at the end). */
+    --arabic-base: 1.7rem;
+    --arabic-scale: 1;
+    --arabic-size: calc(var(--arabic-base) * var(--arabic-scale));
     --arabic-leading: 2.15;
+    --reader-arabic-leading: 1;
 
     --header-h: 62px;
     --container: 1080px;
@@ -128,17 +167,17 @@
     --shadow-md: 0 8px 24px -14px rgba(0, 0, 0, .8);
 }
 
-:root[data-font-size="small"]  { --arabic-size: 1.45rem; }
-:root[data-font-size="medium"] { --arabic-size: 1.7rem; }
-:root[data-font-size="large"]  { --arabic-size: 2.05rem; }
-:root[data-font-size="xlarge"] { --arabic-size: 2.4rem; }
+:root[data-font-size="small"]  { --arabic-base: 1.45rem; }
+:root[data-font-size="medium"] { --arabic-base: 1.7rem; }
+:root[data-font-size="large"]  { --arabic-base: 2.05rem; }
+:root[data-font-size="xlarge"] { --arabic-base: 2.4rem; }
 
 @media (min-width: 720px) {
-    :root { --arabic-size: 1.95rem; --header-h: 68px; }
-    :root[data-font-size="small"]  { --arabic-size: 1.6rem; }
-    :root[data-font-size="medium"] { --arabic-size: 1.95rem; }
-    :root[data-font-size="large"]  { --arabic-size: 2.35rem; }
-    :root[data-font-size="xlarge"] { --arabic-size: 2.8rem; }
+    :root { --arabic-base: 1.95rem; --header-h: 68px; }
+    :root[data-font-size="small"]  { --arabic-base: 1.6rem; }
+    :root[data-font-size="medium"] { --arabic-base: 1.95rem; }
+    :root[data-font-size="large"]  { --arabic-base: 2.35rem; }
+    :root[data-font-size="xlarge"] { --arabic-base: 2.8rem; }
 }
 
 /* ----------------------------------------------------------------- base --- */
@@ -1453,4 +1492,69 @@ body.has-install-bar { padding-bottom: 6.5rem; }
    install bar above it instead of stacking the two on top of each other. */
 body:has(.player) .install-bar {
     bottom: calc(6.9rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* ---------------------------------------------------------------------------
+   Arabic typeface chosen in Settings. Set on <html> by theme.js so the reader
+   paints in the right face before first paint. Each entry carries its own
+   optical scale (some faces run large at the same px), line-height for the page
+   flow, and line-height for the reader's tight card layout.
+   ------------------------------------------------------------------------- */
+:root[data-arabic-font="scheherazade"] {
+    --font-arabic: "Scheherazade New", "Amiri Quran", "Traditional Arabic", serif;
+    --arabic-scale: .93;
+    --arabic-leading: 2.05;
+    --reader-arabic-leading: 1.02;
+}
+:root[data-arabic-font="noto-naskh"] {
+    --font-arabic: "Noto Naskh Arabic", "Amiri Quran", "Traditional Arabic", serif;
+    --arabic-scale: 1.07;
+    --arabic-leading: 2.1;
+    --reader-arabic-leading: 1.05;
+}
+:root[data-arabic-font="nastaliq"] {
+    --font-arabic: "Noto Nastaliq Urdu", "Scheherazade New", "Amiri Quran", serif;
+    --arabic-scale: .95;
+    --arabic-leading: 2.6;
+    --reader-arabic-leading: 1.5;
+}
+/* "amiri-quran" is the default and inherits the :root values unchanged. */
+
+/* ------------------------------------------------- Arabic typeface picker --- */
+/* Each row previews the face it selects, so the choice is judged in the real
+   font rather than from its name. */
+.font-choices { display: grid; gap: .5rem; }
+
+.font-choice {
+    display: flex; align-items: center; gap: .7rem;
+    padding: .55rem .7rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+}
+.font-choice:hover { border-color: var(--border-strong); }
+.font-choice:has(input:checked) {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+}
+.font-choice input[type="radio"] { margin: 0; flex: 0 0 auto; accent-color: var(--accent); }
+.font-choice-body { display: grid; gap: .1rem; min-width: 0; flex: 1 1 auto; }
+.font-choice-name { font-weight: 600; font-size: .88rem; }
+.font-choice-note { color: var(--text-muted); font-size: .76rem; line-height: 1.35; }
+
+.font-choice-sample {
+    flex: 0 0 auto;
+    min-width: 11.5rem;
+    font-size: 1.35rem;
+    line-height: 1.9;
+    color: var(--text);
+    text-align: center;
+    white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+    .font-choice { flex-wrap: wrap; }
+    .font-choice-sample { min-width: 0; width: 100%; text-align: right; font-size: 1.25rem; }
 }

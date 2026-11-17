@@ -73,6 +73,14 @@ final class SettingsController
             $values['theme'] = $theme;
         }
 
+        if (array_key_exists('arabic_font', $input)) {
+            $font = (string) $input['arabic_font'];
+            if (!in_array($font, SettingsRepository::ARABIC_FONTS, true)) {
+                throw ApiException::invalid(['arabic_font' => 'Unsupported Arabic typeface.']);
+            }
+            $values['arabic_font'] = $font;
+        }
+
         if (array_key_exists('playing_style', $input)) {
             $style = (string) $input['playing_style'];
             if (!in_array($style, SettingsRepository::PLAYING_STYLES, true)) {
@@ -93,6 +101,7 @@ final class SettingsController
             'font_sizes'   => SettingsRepository::FONT_SIZES,
             'themes'       => SettingsRepository::THEMES,
             'playing_styles' => SettingsRepository::PLAYING_STYLES,
+            'arabic_fonts'   => SettingsRepository::ARABIC_FONTS,
         ];
     }
 }

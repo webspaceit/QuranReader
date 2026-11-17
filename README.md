@@ -35,6 +35,7 @@ search, verse-by-verse recitation, bookmarks, reading progress, dark mode and us
 |---|---|---|
 | All 114 surahs, Arabic + English names | ✅ | Names, revelation place, verse count, Mushaf pages |
 | Uthmani Arabic text, RTL | ✅ | Bundled Amiri Quran webfont, adjustable size |
+| Quran typeface | ✅ | Amiri Quran (default), Scheherazade New, Noto Naskh Arabic, Noto Nastaliq Urdu — all self-hosted OFL faces, picked in Settings with a preview of each |
 | Multiple translations | ✅ | 4 English + 2 Bengali editions imported by default; add more in config |
 | Search (Arabic + translation, surah name) | ✅ | Diacritic-insensitive Arabic search, search-as-you-type, matched terms highlighted, header surah picker |
 | Audio recitation | ✅ | 7 reciters, verse-by-verse continuous playback, highlight, prev/next |
@@ -139,7 +140,6 @@ Tested with WAMP/XAMPP on Windows and with `php -S` on Linux/macOS.
 ```bash
 # 1. Create the database and tables
 mysql -u root -p -e "source database/schema.sql"
-
 # 2. Create your configuration — .env is the only file you need to edit
 cp .env.example .env
 #    → set DB_DATABASE/DB_USERNAME/DB_PASSWORD and APP_URL=http://localhost:8080
@@ -149,6 +149,13 @@ php bin/import-quran.php
 
 # 5. Serve it
 php -S localhost:8080 -t public_html
+```
+
+Upgrading an existing database instead of creating one? Apply only what is missing:
+
+```bash
+php bin/migrate.php          # adds new columns, idempotent, safe to re-run
+php bin/migrate.php status   # report only, changes nothing
 ```
 
 ### Automated checks (optional, development only)
