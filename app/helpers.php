@@ -232,3 +232,9 @@ function render_page(string $template, array $data = []): void
     $data['content'] = view($template, $data);
     echo view('layout', $data);
 }
+
+/** Best-effort ISO country code for the current visitor. */
+function visitor_country(): string
+{
+    return \Quran\Support\Geo::country();
+}

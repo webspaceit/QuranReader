@@ -86,6 +86,7 @@ return [
             'en.hilali',       // Hilali & Khan
         ],
         'default_translation' => 'en.sahih',
+        'default_translation_bd' => 'bn.bengali',
 
         // Recitations available in the player. Audio is streamed from the
         // Islamic Network CDN (per-verse MP3 files).

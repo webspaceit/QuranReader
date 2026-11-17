@@ -5,6 +5,7 @@ namespace Quran\Repositories;
 
 use Quran\Support\Config;
 use Quran\Support\Database;
+use Quran\Support\Geo;
 
 final class TranslationRepository
 {
@@ -31,6 +32,14 @@ final class TranslationRepository
     /** Default translation id, falling back to the first imported edition. */
     public static function defaultId(): string
     {
+        // Visitors from Bangladesh get the Bengali edition by default.
+        if (Geo::country() === 'BD') {
+            $bd = (string) Config::get('content.default_translation_bd', 'bn.bengali');
+            if ($bd !== '' && self::exists($bd)) {
+                return $bd;
+            }
+        }
+
         $configured = (string) Config::get('content.default_translation', '');
         if ($configured !== '' && self::exists($configured)) {
             return $configured;

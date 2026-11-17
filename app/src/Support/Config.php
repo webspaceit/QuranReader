@@ -214,6 +214,7 @@ final class Config
             // Content
             'CONTENT_TRANSLATIONS'        => ['content.translations', 'csv'],
             'CONTENT_DEFAULT_TRANSLATION' => ['content.default_translation', 'string'],
+            'CONTENT_DEFAULT_TRANSLATION_BD' => ['content.default_translation_bd', 'string'],
             'CONTENT_AUDIO_BASE'          => ['content.audio_base', 'string'],
 
             // Mail

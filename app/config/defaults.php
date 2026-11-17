@@ -71,6 +71,7 @@ return [
             'bn.hoque',
         ],
         'default_translation' => 'en.sahih',
+        'default_translation_bd' => 'bn.bengali',
         'reciters' => [
             'ar.alafasy'      => ['name' => 'مشاري راشد العفاسي', 'english_name' => 'Mishary Rashid Alafasy', 'style' => 'Murattal', 'bitrate' => 128, 'default' => true],
             'ar.husary'       => ['name' => 'محمود خليل الحصري', 'english_name' => 'Mahmoud Khalil Al-Husary', 'style' => 'Murattal', 'bitrate' => 128],
