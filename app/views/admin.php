@@ -32,7 +32,8 @@ $yearValue = (string) ($site['footer_copyright_year'] ?? 'auto');
                 <label for="footer-tagline">Tagline</label>
                 <textarea id="footer-tagline" name="footer_tagline" rows="2" maxlength="240"
                           class="admin-textarea"><?= e($site['footer_tagline'] ?? '') ?></textarea>
-                <p class="field-hint">The sentence under the site name in the footer. 240 characters max.</p>
+                <p class="field-hint">The sentence under the site name in the footer. 240 characters max.
+                    Plain text — character entities like <code>&amp;copy;</code> or <code>&amp;mdash;</code> work, HTML tags do not.</p>
             </div>
 
             <div class="field">
@@ -48,6 +49,7 @@ $yearValue = (string) ($site['footer_copyright_year'] ?? 'auto');
                 <label for="footer-holder">Copyright holder</label>
                 <input id="footer-holder" type="text" name="footer_copyright_holder" maxlength="120" required
                        value="<?= e($site['footer_copyright_holder'] ?? '') ?>">
+                <p class="field-hint">Just the name — the © symbol and the year are added for you.</p>
             </div>
 
             <div class="field">

@@ -38,6 +38,31 @@ final class SiteSettingsRepository
     }
 
     /**
+     * The footer is plain text by design: values are escaped on output, so HTML
+     * tags show up as text. Character entities are still decoded, because
+     * people reasonably type "&copy;" or "&mdash;" and expect the glyph.
+     */
+    public static function normalise(string $value): string
+    {
+        $decoded = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        // Nothing is stripped: the text is stored as typed and escaped on
+        // output, so a stray tag shows up as visible characters instead of
+        // silently eating somebody's words.
+        return trim(preg_replace('/\s+/u', ' ', $decoded) ?? $decoded);
+    }
+
+    /**
+     * The template prints "© <year> <holder>", so a © typed into the holder is
+     * redundant. Drop it rather than rendering "© 2026 © Name".
+     */
+    public static function normaliseHolder(string $value): string
+    {
+        $clean = self::normalise($value);
+        return trim(preg_replace('/^[\s\x{00A9}\x{00AE}]+/u', '', $clean) ?? $clean);
+    }
+
+    /**
      * Effective values: stored rows over the defaults, unknown keys dropped.
      *
      * @return array<string,string>
@@ -54,7 +79,11 @@ final class SiteSettingsRepository
             foreach (Database::select('SELECT setting_key, setting_value FROM site_settings') as $row) {
                 $key = (string) $row['setting_key'];
                 if (in_array($key, self::KEYS, true) && $row['setting_value'] !== null) {
-                    $values[$key] = (string) $row['setting_value'];
+                    // Normalise on read as well, so rows stored before this
+                    // rule (e.g. "&copy;Name") render correctly without a fix-up.
+                    $values[$key] = $key === 'footer_copyright_holder'
+                        ? self::normaliseHolder((string) $row['setting_value'])
+                        : self::normalise((string) $row['setting_value']);
                 }
             }
         } catch (\Throwable $error) {
@@ -83,11 +112,15 @@ final class SiteSettingsRepository
                 continue;
             }
 
+            $value = $key === 'footer_copyright_holder'
+                ? self::normaliseHolder((string) $values[$key])
+                : self::normalise((string) $values[$key]);
+
             Database::execute(
                 'INSERT INTO site_settings (setting_key, setting_value, updated_by)
                  VALUES (?, ?, ?)
                  ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_by = VALUES(updated_by)',
-                [$key, (string) $values[$key], $userId]
+                [$key, $value, $userId]
             );
         }
 

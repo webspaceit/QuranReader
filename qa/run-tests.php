@@ -506,8 +506,26 @@ check('footer text is escaped, not rendered as markup',
     && str_contains($r['body'], '&lt;script&gt;alert(1)&lt;/script&gt;'));
 check('automatic year follows the clock', str_contains($r['body'], '© ' . date('Y') . ' Nur Digital.'));
 
-// Restore the shipped defaults and prove a demoted account is shut out again.
-call('POST', '/admin.php', [
+// Entities are decoded (people type &copy;), tags stay text, and the copyright
+// mark the template prints is not doubled.
+$r = call('POST', '/admin.php', [
+    '_csrf'                   => $tok,
+    'footer_tagline'          => 'Quran &amp; Sunnah &mdash; together',
+    'footer_copyright_holder' => '&copy;Quran Reader',
+    'footer_note'             => '<b>Bold</b> claim',
+    'footer_copyright_year'   => 'auto',
+], $tok);
+$r = call('GET', '/');
+check('entities in the tagline are decoded', str_contains($r['body'], 'Quran &amp; Sunnah — together'), 'tagline entities');
+check('typed &copy; does not double the copyright mark',
+    str_contains($r['body'], '© ' . date('Y') . ' Quran Reader.')
+    && !str_contains($r['body'], '© ' . date('Y') . ' ©'));
+check('html tags print as text, not markup',
+    !str_contains($r['body'], '<b>Bold</b>')
+    && str_contains($r['body'], '&lt;b&gt;Bold&lt;/b&gt; claim'));
+
+// Restore the shipped defaults, then prove a demoted account is shut out.
+$r = call('POST', '/admin.php', [
     '_csrf'                   => $tok,
     'footer_tagline'          => 'A fast, private Quran reader. No advertisements, no tracking, and your data stays yours.',
     'footer_copyright_holder' => 'Quran Reader',
@@ -524,6 +542,9 @@ check('demoted account is refused with 403', $r['status'] === 403, (string) $r['
 check('403 page does not leak the dashboard', !str_contains($r['body'], 'Site settings'));
 $r = call('GET', '/');
 check('admin link is hidden from non-admins', !str_contains($r['body'], 'Admin dashboard'));
+check('footer is back to the shipped defaults',
+    str_contains($r['body'], '© ' . date('Y') . ' Quran Reader.')
+    && str_contains($r['body'], 'A fast, private Quran reader.'));
 
 echo "\n== Highlights and notes ==\n";
 $r = call('POST', '/api/marks/save.php', ['surah' => 2, 'verse' => 255, 'color' => 'yellow'], $tok);

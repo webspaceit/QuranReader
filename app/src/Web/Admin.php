@@ -46,9 +46,9 @@ final class Admin
 
         $input = is_array($_POST) ? $_POST : [];
 
-        $tagline = trim((string) ($input['footer_tagline'] ?? ''));
-        $holder  = trim((string) ($input['footer_copyright_holder'] ?? ''));
-        $note    = trim((string) ($input['footer_note'] ?? ''));
+        $tagline = SiteSettingsRepository::normalise((string) ($input['footer_tagline'] ?? ''));
+        $holder  = SiteSettingsRepository::normaliseHolder((string) ($input['footer_copyright_holder'] ?? ''));
+        $note    = SiteSettingsRepository::normalise((string) ($input['footer_note'] ?? ''));
         $year    = trim((string) ($input['footer_copyright_year'] ?? 'auto'));
 
         $errors = [];
