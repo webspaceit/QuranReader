@@ -322,6 +322,17 @@
         }
     }
 
+    /** The manual install route for this platform, in one sentence. */
+    function manualRoute() {
+        if (isIos()) {
+            return 'On iPhone or iPad: tap the Share button, then "Add to Home Screen".';
+        }
+        if (isAndroid()) {
+            return 'In Chrome on Android: open the three-dot menu and choose "Add to Home screen".';
+        }
+        return 'In Chrome or Edge: open the browser menu and choose "Install app" (or "Add to Home screen").';
+    }
+
     function isAndroid() {
         return /android/i.test(window.navigator.userAgent);
     }
@@ -399,8 +410,18 @@
         primary.type = 'button';
         primary.className = 'install-bar-primary';
         primary.textContent = copy.cta;
+        // Without a captured prompt the click cannot install anything, so it must
+        // not just close the bar: swap the pitch for the manual route, then let a
+        // second click dismiss it.
+        var explained = false;
         primary.addEventListener('click', function () {
             if (!state.installEvent) {
+                if (!explained) {
+                    explained = true;
+                    span.textContent = manualRoute();
+                    primary.textContent = 'Got it';
+                    return;
+                }
                 dismissBanner();
                 return;
             }
@@ -470,9 +491,11 @@
                 }
                 if (hint) {
                     hint.hidden = false;
-                    hint.textContent = isIos()
-                        ? 'On iPhone or iPad: tap the Share button, then "Add to Home Screen".'
-                        : 'In Chrome or Edge: open the browser menu and choose "Install app" (or "Add to Home screen").';
+                    hint.textContent = manualRoute();
+                    // The hint sits under the buttons; make sure the reader sees it.
+                    if (hint.scrollIntoView) {
+                        hint.scrollIntoView({ block: 'nearest' });
+                    }
                 } else {
                     showBanner();
                 }
