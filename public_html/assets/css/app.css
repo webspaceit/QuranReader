@@ -997,7 +997,14 @@ input:disabled { background: var(--bg-muted); color: var(--text-muted); }
     display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
     margin-top: 1.8rem; padding-top: 1rem; border-top: 1px solid var(--border);
 }
-.footer-bottom a { color: var(--text-soft); }
+/* A credit link that splits across two lines reads as two words of the sentence,
+   so keep it whole; the line is short enough that nowrap cannot overflow. */
+.footer-bottom a {
+    color: var(--text-soft);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    white-space: nowrap;
+}
 
 /* The legal line and the data-source credit are reference matter, not content:
    keep them quieter than body copy. Scoped, so .small elsewhere is untouched. */
@@ -1009,7 +1016,6 @@ input:disabled { background: var(--bg-muted); color: var(--text-muted); }
        the text is this small. The softer-but-darker token clears it. */
     color: var(--text-soft);
 }
-.footer-bottom a { color: var(--text-soft); }
 
 .empty-state { text-align: center; padding: 2.2rem 1.2rem; }
 .empty-state h2 { margin-bottom: .4rem; }
