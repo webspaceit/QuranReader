@@ -46,9 +46,9 @@
     // Quran typeface: same precedence as the theme — this browser first, then
     // the account, then the default. Set before first paint to avoid a swap.
     var storedFont = read(KEY_FONT);
-    var arabicFont = storedFont || meta('server-arabic-font') || 'amiri-quran';
+    var arabicFont = storedFont || meta('server-arabic-font') || 'noto-naskh';
     if (FONTS.indexOf(arabicFont) === -1) {
-        arabicFont = 'amiri-quran';
+        arabicFont = 'noto-naskh';
     }
 
     root.setAttribute('data-theme', resolve(themePref));

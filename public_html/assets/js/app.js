@@ -569,7 +569,7 @@
 
     /** Mirror the effective Quran typeface onto the radio group on the page. */
     function syncArabicFontChoice() {
-        var current = root.getAttribute('data-arabic-font') || 'amiri-quran';
+        var current = root.getAttribute('data-arabic-font') || 'noto-naskh';
         document.querySelectorAll('input[name="arabic_font"]').forEach(function (input) {
             input.checked = input.value === current;
         });

@@ -12,7 +12,7 @@ declare(strict_types=1);
 $choices = [
     'amiri-quran'  => [
         'label'  => 'Amiri Quran',
-        'note'   => 'Default · Quranic naskh on King Fahd Complex metrics',
+        'note'   => 'Quranic naskh on King Fahd Complex metrics',
         'family' => '"Amiri Quran"',
     ],
     'scheherazade' => [
@@ -22,7 +22,7 @@ $choices = [
     ],
     'noto-naskh'   => [
         'label'  => 'Noto Naskh Arabic',
-        'note'   => 'Neutral modern naskh, even colour on screen',
+        'note'   => 'Default · Neutral modern naskh, even colour on screen',
         'family' => '"Noto Naskh Arabic"',
     ],
     'nastaliq'     => [
@@ -32,9 +32,9 @@ $choices = [
     ],
 ];
 
-$current = (string) ($settings['arabic_font'] ?? 'amiri-quran');
+$current = (string) ($settings['arabic_font'] ?? 'noto-naskh');
 if (!isset($choices[$current])) {
-    $current = 'amiri-quran';
+    $current = 'noto-naskh';
 }
 ?>
 <div class="field font-field">

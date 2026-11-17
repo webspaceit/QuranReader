@@ -63,7 +63,7 @@ final class SettingsRepository
             'arabic_font_size' => (string) Config::get('content.default_font_size', 'medium'),
             'theme'            => 'system',
             'playing_style'    => 'card',
-            'arabic_font'      => 'amiri-quran',
+            'arabic_font'      => 'noto-naskh',
         ];
     }
 
