@@ -138,9 +138,10 @@ foreach ($reciters as $item) {
             </ul>
 
             <div class="surah-header-actions">
-                <button type="button" class="btn btn-primary" data-play-surah>
-                    <?= icon('play', 'ico ico--filled', 18) ?>
-                    Play surah
+                <button type="button" class="btn btn-primary" data-play-surah aria-pressed="false" title="Play this surah">
+                    <?= icon('play', 'ico ico--filled ico-play', 18) ?>
+                    <?= icon('pause', 'ico ico--filled ico-pause', 18) ?>
+                    <span data-play-surah-label>Play surah</span>
                 </button>
                 <a class="btn btn-ghost" href="<?= e(u('page.php?n=' . max(1, (int) $chapter['pages_from']))) ?>">Mushaf view</a>
             </div>
@@ -218,9 +219,12 @@ foreach ($reciters as $item) {
                                 <?= icon('note', 'ico', 17) ?>
                                 <span class="visually-hidden">Note on verse <?= (int) $verse['verse_number'] ?></span>
                             </button>
-                            <button type="button" class="icon-btn sm" data-action="play" title="Play this verse">
-                                <?= icon('play', 'ico ico--filled', 17) ?>
-                                <span class="visually-hidden">Play verse <?= (int) $verse['verse_number'] ?></span>
+                            <button type="button" class="icon-btn sm" data-action="play"
+                                    aria-pressed="false"
+                                    title="Play verse <?= (int) $verse['verse_number'] ?>">
+                                <?= icon('play', 'ico ico--filled ico-play', 17) ?>
+                                <?= icon('pause', 'ico ico--filled ico-pause', 17) ?>
+                                <span class="visually-hidden" data-play-label>Play verse <?= (int) $verse['verse_number'] ?></span>
                             </button>
                             <button type="button" class="icon-btn sm" data-action="copy" title="Copy verse with reference">
                                 <?= icon('copy', 'ico', 17) ?>
@@ -335,7 +339,7 @@ foreach ($reciters as $item) {
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <button type="button" class="icon-btn sm" data-player-close aria-label="Close player">
+                <button type="button" class="icon-btn sm" data-player-close aria-label="Stop recitation" title="Stop recitation">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
                 </button>
             </div>

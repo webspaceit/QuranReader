@@ -30,6 +30,8 @@
     var scrub = player ? player.querySelector('[data-player-scrub]') : null;
     var reciterSelect = player ? player.querySelector('[data-reciter-select]') : null;
     var closeBtn = player ? player.querySelector('[data-player-close]') : null;
+    var playSurahBtn = reader.querySelector('[data-play-surah]');
+    var playSurahLabel = reader.querySelector('[data-play-surah-label]');
 
     var reciters = {};
     try {
@@ -134,6 +136,9 @@
         audio.src = url;
         updateLabel();
         highlight(index);
+        // Show the pause state as soon as playback is requested; a rejected
+        // play() falls back through setPlayingVisual(false).
+        syncPlayButtons(options.autoplay !== false);
 
         var el = verseOf(index);
         if (el && options.scroll !== false) {
@@ -161,6 +166,45 @@
         if (playToggle) {
             playToggle.classList.toggle('is-playing', playing);
             playToggle.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+        }
+        syncPlayButtons(playing);
+    }
+
+    /**
+     * Keep every play control in step with the audio element: the verse row of
+     * the verse being recited turns into pause, and the header button becomes
+     * Pause/Resume. Without this a playing surah left the verse icon showing
+     * "play" with no way to pause short of scrolling to the player bar.
+     */
+    function syncPlayButtons(playing) {
+        if (typeof playing !== 'boolean') {
+            playing = !!audio && !audio.paused && !audio.ended;
+        }
+        verses.forEach(function (el, i) {
+            var btn = el.querySelector('[data-action="play"]');
+            var active = i === state.index;
+            el.classList.toggle('is-playing', playing && active);
+            if (!btn) {
+                return;
+            }
+            btn.classList.toggle('is-playing', playing && active);
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+            btn.title = (playing && active ? 'Pause verse ' : active ? 'Resume verse ' : 'Play verse ')
+                + el.getAttribute('data-verse');
+            var label = btn.querySelector('[data-play-label]');
+            if (label) {
+                label.textContent = btn.title;
+            }
+        });
+        if (playSurahBtn) {
+            playSurahBtn.classList.toggle('is-playing', playing);
+            playSurahBtn.setAttribute('aria-pressed', playing ? 'true' : 'false');
+            playSurahBtn.title = playing ? 'Pause the recitation' : 'Play this surah';
+        }
+        if (playSurahLabel) {
+            playSurahLabel.textContent = playing
+                ? 'Pause surah'
+                : state.index >= 0 ? 'Resume surah' : 'Play surah';
         }
     }
 
@@ -397,6 +441,7 @@
                 audio.removeAttribute('src');
                 audio.load();
             }
+            state.index = -1;
             player.hidden = true;
             document.body.classList.remove('player-open');
             clearHighlight();
@@ -581,7 +626,11 @@
         }
         if (playBtn) {
             playBtn.addEventListener('click', function () {
-                playIndex(index);
+                if (state.index === index) {
+                    togglePlayback();
+                } else {
+                    playIndex(index);
+                }
             });
         }
         if (copyBtn) {
@@ -628,11 +677,14 @@
         }
     });
 
-    // Play the whole surah from the top.
-    var playSurahBtn = reader.querySelector('[data-play-surah]');
+    // Play the whole surah from the top, or pause/resume it once it started.
     if (playSurahBtn) {
         playSurahBtn.addEventListener('click', function () {
-            playIndex(0);
+            if (state.index === -1) {
+                playIndex(0);
+                return;
+            }
+            togglePlayback();
         });
     }
 

@@ -284,6 +284,33 @@
     color: var(--emerald-2);
 }
 
+/* Play/pause toggles: the verse row and the header button swap icons while the
+   recitation runs, so pausing never means hunting for the player bar. */
+.reader [data-action="play"] .ico-pause,
+.reader [data-play-surah] .ico-pause {
+    display: none;
+}
+
+.reader [data-action="play"].is-playing .ico-play,
+.reader [data-play-surah].is-playing .ico-play {
+    display: none;
+}
+
+.reader [data-action="play"].is-playing .ico-pause,
+.reader [data-play-surah].is-playing .ico-pause {
+    display: inline-block;
+}
+
+.reader .verse-actions .icon-btn.is-playing {
+    background: rgba(197, 160, 89, 0.2);
+    color: var(--emerald-2);
+}
+
+/* Paused on this verse: keep a quiet marker even though the aura is off. */
+.reader .verse[aria-current="true"] {
+    border-color: rgba(197, 160, 89, 0.5);
+}
+
 .reader .verse-main {
     max-width: none;
     margin: 0;
@@ -434,6 +461,11 @@
 
 :root[data-theme="dark"] .reader .verse-ref {
     color: #23200f;
+}
+
+:root[data-theme="dark"] .reader .verse-actions .icon-btn.is-playing {
+    background: rgba(197, 160, 89, 0.16);
+    color: var(--gold-light);
 }
 
 /* --------------------------------------------------------------- mobile --- */
