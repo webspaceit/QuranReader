@@ -180,6 +180,7 @@ final class Config
             'APP_DEBUG'       => ['app.debug', 'bool'],
             'APP_TIMEZONE'    => ['app.timezone', 'string'],
             'APP_LOCALE'      => ['app.locale', 'string'],
+            'APP_ADMIN_EMAIL' => ['app.admin_email', 'string'],
 
             // Database
             'DB_HOST'         => ['database.host', 'string'],

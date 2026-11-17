@@ -68,6 +68,20 @@
         return el ? el.getAttribute('content') : '';
     }
 
+    /**
+     * Resolve an API path. Markup built by u() already contains the base
+     * ("/quran-project/public_html/api/..."); relative call sites do not.
+     * Prefixing both produced a doubled path and a 404 on every form submit
+     * whenever the app is installed in a subdirectory.
+     */
+    function apiUrl(path) {
+        var value = String(path === undefined || path === null ? '' : path);
+        if (value.charAt(0) === '/') {
+            return value;
+        }
+        return BASE + '/' + value.replace(/^\/+/, '');
+    }
+
     function api(path, data, options) {
         options = options || {};
         var method = options.method || (data === undefined ? 'GET' : 'POST');
@@ -89,7 +103,7 @@
             headers['X-CSRF-Token'] = csrfToken();
         }
 
-        return fetch(BASE + '/' + String(path).replace(/^\//, ''), init).then(function (response) {
+        return fetch(apiUrl(path), init).then(function (response) {
             return response.text().then(function (text) {
                 var payload = null;
                 try {

@@ -24,10 +24,44 @@ use Quran\Support\Database;
 $columns = [
     ['user_settings', 'playing_style', "VARCHAR(16) NULL DEFAULT NULL AFTER `theme`"],
     ['user_settings', 'arabic_font', "VARCHAR(24) NULL DEFAULT NULL AFTER `arabic_font_size`"],
+    ['users', 'is_admin', "TINYINT(1) NOT NULL DEFAULT 0 AFTER `full_name`"],
+];
+
+/** Tables added after the first release. */
+$tables = [
+    'site_settings' => "CREATE TABLE IF NOT EXISTS `site_settings` (
+        `setting_key` VARCHAR(64) NOT NULL,
+        `setting_value` TEXT NULL DEFAULT NULL,
+        `updated_by` BIGINT UNSIGNED NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (`setting_key`),
+        CONSTRAINT `fk_site_settings_user` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 ];
 
 $status = ($argv[1] ?? '') === 'status';
 $applied = 0;
+
+foreach ($tables as $table => $ddl) {
+    $exists = (int) Database::value(
+        'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ?',
+        [$table]
+    ) > 0;
+
+    if ($exists) {
+        echo "skip    table {$table} — already present\n";
+        continue;
+    }
+
+    if ($status) {
+        echo "missing table {$table}\n";
+        continue;
+    }
+
+    Database::execute($ddl);
+    echo "added   table {$table}\n";
+    $applied++;
+}
 
 foreach ($columns as [$table, $column, $definition]) {
     $exists = (int) Database::value(
@@ -53,4 +87,4 @@ foreach ($columns as [$table, $column, $definition]) {
 
 echo $status
     ? "status only — nothing was changed\n"
-    : "done — {$applied} column(s) added\n";
+    : "done — {$applied} change(s) applied\n";

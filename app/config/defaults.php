@@ -20,6 +20,9 @@ return [
         'debug'       => false,
         'timezone'    => 'UTC',
         'locale'      => 'en',
+        // Optional: an email that is always treated as the super admin, even
+        // before the is_admin flag is set. env: APP_ADMIN_EMAIL
+        'admin_email' => '',
     ],
 
     'database' => [

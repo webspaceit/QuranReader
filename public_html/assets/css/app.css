@@ -1558,3 +1558,62 @@ body:has(.player) .install-bar {
     .font-choice { flex-wrap: wrap; }
     .font-choice-sample { min-width: 0; width: 100%; text-align: right; font-size: 1.25rem; }
 }
+
+/* --------------------------------------------------------------- admin --- */
+.admin-nav { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 1rem; }
+
+.admin-nav-link {
+    padding: .42rem .8rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text-soft);
+    font-size: .86rem;
+    text-decoration: none;
+}
+.admin-nav-link:hover { border-color: var(--border-strong); color: var(--text); }
+.admin-nav-link.is-current { border-color: var(--accent); color: var(--text); font-weight: 600; }
+
+.admin-section-title {
+    margin: 1.2rem 0 .6rem;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.admin-textarea {
+    width: 100%;
+    padding: .55rem .65rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: .92rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+.admin-textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.admin-preview {
+    margin-top: .9rem;
+    padding: .75rem .85rem;
+    border: 1px dashed var(--border-strong);
+    border-radius: 12px;
+    background: var(--bg-muted);
+}
+.admin-preview-label {
+    display: block;
+    margin-bottom: .3rem;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+.admin-preview-tagline { margin: 0 0 .3rem; font-size: .92rem; }
+.admin-foot-note { margin-top: 1rem; }
+
+.footer-admin-link { color: var(--accent); font-weight: 600; }

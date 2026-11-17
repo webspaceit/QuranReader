@@ -15,12 +15,15 @@
  * @var string $activeNav
  * @var string $bodyClass
  * @var array<int,string> $pageScripts
+ * @var array $site            Site-wide settings (footer text, copyright)
  */
 $pageScripts = $pageScripts ?? [];
 $pageStyles  = $pageStyles ?? [];
 $bodyClass   = $bodyClass ?? '';
 $activeNav   = $activeNav ?? '';
-$year        = date('Y');
+$site        = $site ?? \Quran\Repositories\SiteSettingsRepository::all();
+$year        = \Quran\Repositories\SiteSettingsRepository::copyrightYear($site);
+$isAdmin     = \Quran\Auth\Auth::isAdmin();
 ?>
 <!doctype html>
 <html lang="en" data-theme="<?= e($settings['theme'] ?? 'system') ?>" data-font-size="<?= e($settings['arabic_font_size'] ?? 'medium') ?>" data-playing-style="<?= e($settings['playing_style'] ?? 'card') ?>"
@@ -139,9 +142,7 @@ $year        = date('Y');
     <div class="container footer-inner">
         <div class="footer-col">
             <div class="footer-brand"><?= e($appName) ?></div>
-            <p class="muted small">
-                A fast, private Quran reader. No advertisements, no tracking, and your data stays yours.
-            </p>
+            <p class="muted small"><?= e($site['footer_tagline'] ?? '') ?></p>
         </div>
         <div class="footer-col">
             <div class="footer-heading">Explore</div>
@@ -165,11 +166,19 @@ $year        = date('Y');
                 <?php else: ?>
                     <li><a href="<?= e(u('login.php')) ?>">Sign in</a></li>
                 <?php endif; ?>
+                <?php if ($isAdmin): ?>
+                    <li><a class="footer-admin-link" href="<?= e(u('admin.php')) ?>">Admin dashboard</a></li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>
     <div class="container footer-bottom">
-        <span class="muted small">© <?= e($year) ?> <?= e($appName) ?>.</span>
+        <span class="muted small">
+            © <?= e($year) ?> <?= e($site['footer_copyright_holder'] ?? $appName) ?>.
+            <?php if (($site['footer_note'] ?? '') !== ''): ?>
+                <?= e($site['footer_note']) ?>
+            <?php endif; ?>
+        </span>
         <span class="muted small">
             Quran text, translations and page data from the public
             <a href="https://alquran.cloud/api" rel="noopener nofollow" target="_blank">Al Quran Cloud</a> API.

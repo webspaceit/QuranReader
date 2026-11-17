@@ -6,6 +6,7 @@ namespace Quran\Auth;
 use Quran\Repositories\ProgressRepository;
 use Quran\Repositories\SettingsRepository;
 use Quran\Repositories\UserRepository;
+use Quran\Support\Config;
 use Quran\Support\Csrf;
 use Quran\Support\Database;
 use Quran\Support\Logger;
@@ -58,6 +59,26 @@ final class Auth
     public static function check(): bool
     {
         return self::user() !== null;
+    }
+
+    /**
+     * Super admin: the owner of the installation. Either the account carries
+     * the is_admin flag, or its email matches app.admin_email — the second path
+     * lets a hosting install nominate an owner from .env alone.
+     */
+    public static function isAdmin(): bool
+    {
+        $user = self::user();
+        if ($user === null) {
+            return false;
+        }
+
+        if ((int) ($user['is_admin'] ?? 0) === 1) {
+            return true;
+        }
+
+        $owner = strtolower(trim((string) Config::get('app.admin_email', '')));
+        return $owner !== '' && strtolower((string) $user['email']) === $owner;
     }
 
     /**

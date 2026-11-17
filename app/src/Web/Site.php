@@ -10,6 +10,7 @@ use Quran\Repositories\MarkRepository;
 use Quran\Repositories\ProgressRepository;
 use Quran\Repositories\ReciterRepository;
 use Quran\Repositories\SettingsRepository;
+use Quran\Repositories\SiteSettingsRepository;
 use Quran\Repositories\TranslationRepository;
 use Quran\Repositories\VerseRepository;
 use Quran\Support\Config;
@@ -48,6 +49,7 @@ final class Site
             'canonical'     => absolute_url(),
             'currentUser'   => Auth::user(),
             'settings'      => $settings,
+            'site'          => SiteSettingsRepository::all(),
             'csrfToken'     => Csrf::token(),
             'bookmarkCount' => $userId === null ? 0 : BookmarkRepository::countForUser($userId),
             'flashStatus'   => Session::flash('status'),
@@ -507,6 +509,15 @@ final class Site
     // -------------------------------------------------------------------------
     // Errors
     // -------------------------------------------------------------------------
+
+    public function forbidden(string $message = 'You do not have access to this page.'): void
+    {
+        http_response_code(403);
+        self::render('errors/403', [
+            'pageTitle' => 'Access denied',
+            'message'   => $message,
+        ]);
+    }
 
     public function notFound(string $message = 'The page you are looking for could not be found.'): void
     {

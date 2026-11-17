@@ -241,6 +241,18 @@ check('comma lists are parsed', \Quran\Support\Config::get('content.translations
 check('integers are cast', \Quran\Support\Config::get('session.idle_timeout') === 42);
 check('defaults still fill untouched keys', is_array(\Quran\Support\Config::get('content.reciters')) && count(\Quran\Support\Config::get('content.reciters')) === 7);
 
+// Drop the overrides again: putenv() leaks into every child process this run
+// spawns, and a bogus DB_DATABASE breaks any CLI script started later.
+foreach (['APP_NAME', 'DB_DATABASE', 'CONTENT_TRANSLATIONS', 'SESSION_IDLE_TIMEOUT'] as $override) {
+    putenv($override);
+}
+
+// Drop the overrides again: putenv() leaks into every child process this run
+// spawns, and a bogus DB_DATABASE breaks any CLI script started later.
+foreach (['APP_NAME', 'DB_DATABASE', 'CONTENT_TRANSLATIONS', 'SESSION_IDLE_TIMEOUT'] as $override) {
+    putenv($override);
+}
+
 echo "\n== Progressive web app ==\n";
 $r = call('GET', '/manifest.webmanifest');
 $manifest = json_decode($r['body'], true);
@@ -274,6 +286,15 @@ $r = call('GET', '/settings.php');
 check('settings links the manifest', str_contains($r['body'], 'rel="manifest"'));
 check('settings offers the offline download', str_contains($r['body'], 'data-offline-download'));
 check('layout registers the pwa script', str_contains($r['body'], 'assets/js/pwa.js'));
+// api() must not prefix BASE onto server-built (u()) paths, or every form post
+// doubles the install path and 404s.
+$appJs = (string) file_get_contents($root . '/public_html/assets/js/app.js');
+check('api() leaves absolute paths alone',
+    str_contains($appJs, 'function apiUrl(path)')
+    && str_contains($appJs, "if (value.charAt(0) === '/')")
+    && str_contains($appJs, 'fetch(apiUrl(path), init)'));
+check('forms hand api() a server-built path',
+    preg_match('/data-api="[^"]*\/api\/settings\/save\.php"/', $r['body']) === 1);
 check('layout ships an apple touch icon', str_contains($r['body'], 'apple-touch-icon'));
 
 foreach (['icon-192.png' => 192, 'icon-512.png' => 512, 'icon-maskable-512.png' => 512, 'apple-touch-icon.png' => 180] as $file => $size) {
@@ -305,7 +326,7 @@ foreach (['/api/bookmarks/list.php', '/api/progress/get.php', '/api/settings/get
     check("guest blocked from $path", $r['status'] === 401, (string) $r['status']);
 }
 $r = call('POST', '/api/auth/login.php', ['email' => 'x@example.com', 'password' => 'whatever123']);
-check('POST without CSRF → 419', $r['status'] === 419, (string) $r['status']);
+check('POST without CSRF → 403', $r['status'] === 403, (string) $r['status']);
 $r = call('POST', '/api/bookmarks/add.php', ['surah' => 1, 'verse' => 1], $tok);
 check('guest POST with token → 401', $r['status'] === 401, (string) $r['status']);
 $r = call('GET', '/api/marks/list.php');
@@ -420,6 +441,89 @@ check('typeface scale and leading are per face',
 check('migration script covers settings columns',
     is_file($root . '/bin/migrate.php')
     && str_contains((string) file_get_contents($root . '/database/schema.sql'), '`arabic_font` VARCHAR(24)'));
+
+echo "\n== Super admin: footer and copyright ==\n";
+// A thrown-away session, because the flow above leaves this one signed in.
+$signedInSid = $sid;
+$sid = 'qa-guest' . bin2hex(random_bytes(4));
+$r = call('GET', '/admin.php');
+check('guest cannot open the admin dashboard', $r['status'] === 302, (string) $r['status']);
+check('guest is sent to sign in', str_contains((string) ($r['headers'] ?? ''), 'login.php'));
+$sid = $signedInSid;
+
+$promote = (string) shell_exec(
+    escapeshellarg($php) . ' ' . escapeshellarg($root . '/bin/user.php') . ' promote ' . escapeshellarg($email) . ' 2>&1'
+);
+check('bin/user.php promotes an account', str_contains($promote, 'Promoted'), $promote);
+
+$r = call('GET', '/admin.php');
+check('super admin opens the dashboard', $r['status'] === 200 && str_contains($r['body'], 'Site settings'), (string) $r['status']);
+check('dashboard carries the footer form',
+    str_contains($r['body'], 'name="footer_tagline"')
+    && str_contains($r['body'], 'name="footer_copyright_holder"')
+    && str_contains($r['body'], 'name="footer_copyright_year"')
+    && str_contains($r['body'], 'name="footer_note"'));
+check('dashboard previews the copyright line',
+    str_contains($r['body'], 'admin-preview')
+    && preg_match('/admin-preview[\s\S]{0,400}?© ' . date('Y') . '/', $r['body']) === 1);
+
+$r = call('POST', '/admin.php', [
+    '_csrf'                   => $tok,
+    'footer_tagline'          => 'A quiet place to read.',
+    'footer_copyright_holder' => 'Nur Digital',
+    'footer_note'             => 'Made for readers in Dhaka',
+    'footer_copyright_year'   => '2024',
+], $tok);
+check('footer saves and redirects', $r['status'] === 302, (string) $r['status']);
+
+$r = call('GET', '/');
+check('tagline is live site-wide', str_contains($r['body'], 'A quiet place to read.'), 'tagline missing');
+check('copyright prints the stored holder and year', str_contains($r['body'], '© 2024 Nur Digital.'), 'copyright line missing');
+check('extra footer line renders', str_contains($r['body'], 'Made for readers in Dhaka'));
+
+$r = call('POST', '/admin.php', [
+    '_csrf'                   => $tok,
+    'footer_tagline'          => 'Still here',
+    'footer_copyright_holder' => 'Nur Digital',
+    'footer_note'             => '',
+    'footer_copyright_year'   => 'twenty-four',
+], $tok);
+$r = call('GET', '/admin.php');
+check('invalid year is rejected with a reason', str_contains($r['body'], 'four-digit year'), 'no validation message');
+$r = call('GET', '/');
+check('rejected save changed nothing', str_contains($r['body'], 'A quiet place to read.'));
+
+$r = call('POST', '/admin.php', [
+    '_csrf'                   => $tok,
+    'footer_tagline'          => '<script>alert(1)</script>',
+    'footer_copyright_holder' => 'Nur Digital',
+    'footer_note'             => '',
+    'footer_copyright_year'   => 'auto',
+], $tok);
+$r = call('GET', '/');
+check('footer text is escaped, not rendered as markup',
+    !str_contains($r['body'], '<script>alert(1)</script>')
+    && str_contains($r['body'], '&lt;script&gt;alert(1)&lt;/script&gt;'));
+check('automatic year follows the clock', str_contains($r['body'], '© ' . date('Y') . ' Nur Digital.'));
+
+// Restore the shipped defaults and prove a demoted account is shut out again.
+call('POST', '/admin.php', [
+    '_csrf'                   => $tok,
+    'footer_tagline'          => 'A fast, private Quran reader. No advertisements, no tracking, and your data stays yours.',
+    'footer_copyright_holder' => 'Quran Reader',
+    'footer_note'             => '',
+    'footer_copyright_year'   => 'auto',
+], $tok);
+
+$demote = (string) shell_exec(
+    escapeshellarg($php) . ' ' . escapeshellarg($root . '/bin/user.php') . ' demote ' . escapeshellarg($email) . ' 2>&1'
+);
+check('bin/user.php demotes an account', str_contains($demote, 'Demoted'), $demote);
+$r = call('GET', '/admin.php');
+check('demoted account is refused with 403', $r['status'] === 403, (string) $r['status']);
+check('403 page does not leak the dashboard', !str_contains($r['body'], 'Site settings'));
+$r = call('GET', '/');
+check('admin link is hidden from non-admins', !str_contains($r['body'], 'Admin dashboard'));
 
 echo "\n== Highlights and notes ==\n";
 $r = call('POST', '/api/marks/save.php', ['surah' => 2, 'verse' => 255, 'color' => 'yellow'], $tok);

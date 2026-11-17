@@ -32,11 +32,23 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` VARCHAR(255) NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
   `full_name` VARCHAR(255) NULL DEFAULT NULL,
+  `is_admin` TINYINT(1) NOT NULL DEFAULT 0,
   `last_login_at` TIMESTAMP NULL DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_users_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Site-wide settings (footer text, copyright line). Edited by a super admin
+-- from admin.php; every key falls back to a shipped default.
+CREATE TABLE IF NOT EXISTS `site_settings` (
+  `setting_key` VARCHAR(64) NOT NULL,
+  `setting_value` TEXT NULL DEFAULT NULL,
+  `updated_by` BIGINT UNSIGNED NULL DEFAULT NULL,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`setting_key`),
+  CONSTRAINT `fk_site_settings_user` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Password reset tokens. Only a SHA-256 hash of the token is stored, so a

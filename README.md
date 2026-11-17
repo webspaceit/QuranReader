@@ -35,6 +35,7 @@ search, verse-by-verse recitation, bookmarks, reading progress, dark mode and us
 |---|---|---|
 | All 114 surahs, Arabic + English names | ✅ | Names, revelation place, verse count, Mushaf pages |
 | Uthmani Arabic text, RTL | ✅ | Bundled Amiri Quran webfont, adjustable size |
+| Super admin dashboard | ✅ | Owner-only `/admin.php`: footer tagline, copyright holder and year, optional footer line — stored in the database and applied site-wide |
 | Quran typeface | ✅ | Amiri Quran (default), Scheherazade New, Noto Naskh Arabic, Noto Nastaliq Urdu — all self-hosted OFL faces, picked in Settings with a preview of each |
 | Multiple translations | ✅ | 4 English + 2 Bengali editions imported by default; add more in config |
 | Search (Arabic + translation, surah name) | ✅ | Diacritic-insensitive Arabic search, search-as-you-type, matched terms highlighted, header surah picker |
@@ -132,6 +133,20 @@ Only `public_html/` is exposed. `app/`, `bin/`, `database/` and `storage/` sit o
 and each of those folders also contains an `.htaccess` deny-all as a second line of defence.
 
 ---
+
+## Super admin
+
+The owner account reaches `admin.php` (footer + copyright). Two ways to nominate it:
+
+```bash
+php bin/user.php promote owner@example.com   # sets the is_admin flag
+php bin/user.php demote  owner@example.com   # takes it away
+```
+
+or set `APP_ADMIN_EMAIL=owner@example.com` in `.env` — that account is treated as
+owner even before the flag exists, which is handy on shared hosting where you
+only have FTP. Everyone else gets a 403, and the admin link never appears in
+their footer.
 
 ## 4. Quick start (local)
 

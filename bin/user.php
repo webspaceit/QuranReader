@@ -8,6 +8,8 @@
  *   php bin/user.php reset-link user@example.com     # prints a one-time reset URL
  *   php bin/user.php reset-password user@example.com "new-password"
  *   php bin/user.php list
+ *   php bin/user.php promote owner@example.com   # super admin dashboard
+ *   php bin/user.php demote owner@example.com
  */
 declare(strict_types=1);
 
@@ -45,21 +47,42 @@ switch ($command) {
         exit(0);
 
     case 'list':
-        $users = Database::select('SELECT id, email, full_name, created_at, last_login_at FROM users ORDER BY id');
+        $users = Database::select('SELECT id, email, full_name, is_admin, created_at, last_login_at FROM users ORDER BY id');
         if ($users === []) {
             echo "No users yet.\n";
             exit(0);
         }
         foreach ($users as $user) {
             printf(
-                "#%d  %-32s %-24s joined %s  last login %s\n",
+                "#%d%s %-32s %-24s joined %s  last login %s\n",
                 (int) $user['id'],
+                ((int) ($user['is_admin'] ?? 0) === 1) ? ' *' : '  ',
                 $user['email'],
                 $user['full_name'] ?? '—',
                 substr((string) $user['created_at'], 0, 10),
                 $user['last_login_at'] ?? 'never'
             );
         }
+        exit(0);
+
+    case 'promote':
+    case 'demote':
+        $email = UserRepository::normalizeEmail((string) ($argv[2] ?? ''));
+        if ($email === '') {
+            fail('Usage: php bin/user.php promote <email>');
+        }
+        $user = UserRepository::findByEmail($email);
+        if ($user === null) {
+            fail("No account with that email.");
+        }
+        $makeAdmin = $command === 'promote';
+        UserRepository::setAdmin((int) $user['id'], $makeAdmin);
+        printf(
+            "%s %s — %s\n",
+            $makeAdmin ? 'Promoted' : 'Demoted',
+            $user['email'],
+            $makeAdmin ? 'can now open admin.php' : 'no longer has admin access'
+        );
         exit(0);
 
     case 'create':

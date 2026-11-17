@@ -18,7 +18,7 @@ final class UserRepository
     public static function findById(int $id): ?array
     {
         return Database::first(
-            'SELECT id, email, full_name, created_at, last_login_at FROM users WHERE id = ? LIMIT 1',
+            'SELECT id, email, full_name, is_admin, created_at, last_login_at FROM users WHERE id = ? LIMIT 1',
             [$id]
         );
     }
@@ -55,6 +55,12 @@ final class UserRepository
     public static function updateProfile(int $id, ?string $fullName): void
     {
         Database::execute('UPDATE users SET full_name = ? WHERE id = ?', [$fullName, $id]);
+    }
+
+    /** Promote or demote an account. Super admins edit site-wide settings. */
+    public static function setAdmin(int $id, bool $isAdmin): void
+    {
+        Database::execute('UPDATE users SET is_admin = ? WHERE id = ?', [$isAdmin ? 1 : 0, $id]);
     }
 
     public static function emailExists(string $email): bool

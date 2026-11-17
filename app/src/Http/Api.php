@@ -52,9 +52,12 @@ final class Api
 
             $requiresCsrf = $options['csrf'] ?? (strtoupper($method) === 'POST');
             if ($requiresCsrf && !Csrf::verifyRequest()) {
+                // 419 is not an IANA status; PHP-CGI behind Apache rewrites it
+                // to 500, which made an expired form look like a server fault.
+                // 403 is the honest answer and survives every SAPI.
                 throw new ApiException(
                     'Your session expired. Please refresh the page and try again.',
-                    419,
+                    403,
                     'csrf_failed'
                 );
             }

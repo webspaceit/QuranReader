@@ -30,6 +30,7 @@ return [
         'debug'       => false,                   // ALWAYS false in production
         'timezone'    => 'UTC',
         'locale'      => 'en',
+        'admin_email' => '',                       // env: APP_ADMIN_EMAIL
     ],
 
     'database' => [
