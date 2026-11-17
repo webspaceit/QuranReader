@@ -320,6 +320,7 @@ foreach ($reciters as $item) {
                 <div class="player-track">
                     <div class="player-meta">
                         <span class="player-verse" data-player-label>Verse</span>
+                        <span class="player-remaining" data-player-remaining hidden></span>
                         <span class="player-reciter muted small"><?= e($reciter['english_name'] ?? '') ?></span>
                     </div>
                     <div class="player-scrub" data-player-scrub role="slider" tabindex="0" aria-label="Recitation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">

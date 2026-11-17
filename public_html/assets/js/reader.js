@@ -25,6 +25,7 @@
     var prevBtn = player ? player.querySelector('[data-player-prev]') : null;
     var nextBtn = player ? player.querySelector('[data-player-next]') : null;
     var labelEl = player ? player.querySelector('[data-player-label]') : null;
+    var remainingEl = player ? player.querySelector('[data-player-remaining]') : null;
     var progressEl = player ? player.querySelector('[data-player-progress]') : null;
     var timeEl = player ? player.querySelector('[data-player-time]') : null;
     var scrub = player ? player.querySelector('[data-player-scrub]') : null;
@@ -117,6 +118,27 @@
         labelEl.title = 'Verse ' + number + ' of ' + total;
     }
 
+    /** Ayat still to come after the verse being recited, counted down live. */
+    function updateRemaining() {
+        if (!remainingEl) {
+            return;
+        }
+        if (state.index < 0) {
+            remainingEl.hidden = true;
+            remainingEl.textContent = '';
+            remainingEl.removeAttribute('title');
+            return;
+        }
+        var left = verses.length - state.index - 1;
+        remainingEl.hidden = false;
+        remainingEl.textContent = left === 0
+            ? 'Last ayah'
+            : left + (left === 1 ? ' ayah left' : ' ayat left');
+        remainingEl.title = left === 0
+            ? 'This is the last ayah of the surah'
+            : left + ' ayat remaining after ' + surahNumber + ':' + verseOf(state.index).getAttribute('data-verse');
+    }
+
     function playIndex(index, options) {
         options = options || {};
         if (index < 0 || index >= verses.length) {
@@ -135,6 +157,7 @@
         retriedVerse = '';
         audio.src = url;
         updateLabel();
+        updateRemaining();
         highlight(index);
         // Show the pause state as soon as playback is requested; a rejected
         // play() falls back through setPlayingVisual(false).
@@ -442,6 +465,7 @@
                 audio.load();
             }
             state.index = -1;
+            updateRemaining();
             player.hidden = true;
             document.body.classList.remove('player-open');
             clearHighlight();
