@@ -19,10 +19,10 @@ $yearValue = (string) ($site['footer_copyright_year'] ?? 'auto');
         </header>
 
         <nav class="admin-nav" aria-label="Admin sections">
-            <a class="admin-nav-link is-current" href="<?= e(u('admin.php')) ?>" aria-current="page">Footer &amp; copyright</a>
+            <a class="admin-nav-link is-current" href="<?= e(u('wsdashboard.php')) ?>" aria-current="page">Footer &amp; copyright</a>
         </nav>
 
-        <form class="card settings-form" method="post" action="<?= e(u('admin.php')) ?>">
+        <form class="card settings-form" method="post" action="<?= e(u('wsdashboard.php')) ?>">
             <input type="hidden" name="_csrf" value="<?= e($csrfToken) ?>">
             <input type="hidden" name="section" value="footer">
 

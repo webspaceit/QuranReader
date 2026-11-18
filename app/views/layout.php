@@ -188,7 +188,7 @@ $isAdmin     = \Quran\Auth\Auth::isAdmin();
                     <li><a href="<?= e(u('login.php')) ?>">Sign in</a></li>
                 <?php endif; ?>
                 <?php if ($isAdmin): ?>
-                    <li><a class="footer-admin-link" href="<?= e(u('admin.php')) ?>">Admin dashboard</a></li>
+                    <li><a class="footer-admin-link" href="<?= e(u('wsdashboard.php')) ?>">Admin dashboard</a></li>
                 <?php endif; ?>
             </ul>
         </div>

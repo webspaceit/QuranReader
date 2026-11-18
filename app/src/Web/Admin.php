@@ -40,7 +40,7 @@ final class Admin
 
         if (!Csrf::verifyRequest()) {
             Session::flash('error', 'Your session expired. Please try again.');
-            $this->redirect('admin.php');
+            $this->redirect('wsdashboard.php');
             return;
         }
 
@@ -67,7 +67,7 @@ final class Admin
 
         if ($errors !== []) {
             Session::flash('error', implode(' ', $errors));
-            $this->redirect('admin.php');
+            $this->redirect('wsdashboard.php');
             return;
         }
 
@@ -79,7 +79,7 @@ final class Admin
         ], Auth::id());
 
         Session::flash('status', 'Footer updated. The change is live on every page.');
-        $this->redirect('admin.php');
+        $this->redirect('wsdashboard.php');
     }
 
     // -------------------------------------------------------------------------
@@ -115,7 +115,7 @@ final class Admin
         $data = [
             'appName'         => (string) \Quran\Support\Config::get('app.name', 'Quran Reader'),
             'metaDescription' => 'Site administration.',
-            'canonical'       => absolute_url('admin.php'),
+            'canonical'       => absolute_url('wsdashboard.php'),
             'currentUser'     => Auth::user(),
             'settings'        => Auth::settings(),
             'csrfToken'       => Csrf::token(),

@@ -35,7 +35,7 @@ search, verse-by-verse recitation, bookmarks, reading progress, dark mode and us
 |---|---|---|
 | All 114 surahs, Arabic + English names | ✅ | Names, revelation place, verse count, Mushaf pages |
 | Uthmani Arabic text, RTL | ✅ | Bundled Amiri Quran webfont, adjustable size |
-| Super admin dashboard | ✅ | Owner-only `/admin.php`: footer tagline, copyright holder and year, optional footer line — stored in the database and applied site-wide |
+| Super admin dashboard | ✅ | Owner-only `/wsdashboard.php`: footer tagline, copyright holder and year, optional footer line — stored in the database and applied site-wide |
 | Quran typeface | ✅ | Amiri Quran (default), Scheherazade New, Noto Naskh Arabic, Noto Nastaliq Urdu — all self-hosted OFL faces, picked in Settings with a preview of each |
 | Multiple translations | ✅ | 4 English + 2 Bengali editions imported by default; add more in config |
 | Search (Arabic + translation, surah name) | ✅ | Diacritic-insensitive Arabic search, search-as-you-type, matched terms highlighted, header surah picker |
@@ -160,7 +160,7 @@ redirects, but form POSTs and the service worker do not.
 
 ## Super admin
 
-The owner account reaches `admin.php` (footer + copyright). Two ways to nominate it:
+The owner account reaches `wsdashboard.php` (footer + copyright). Two ways to nominate it:
 
 ```bash
 php bin/user.php promote owner@example.com   # sets the is_admin flag
