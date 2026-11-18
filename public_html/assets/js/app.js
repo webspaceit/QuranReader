@@ -752,8 +752,105 @@
     }
 
     // --------------------------------------------------------- account forms
+    /**
+     * Field level messages from a validation failure. The API reports them as
+     * error.details.fields = { field_name: "message" }, which used to be thrown
+     * away here: the form only said "check the highlighted fields" while no
+     * field was actually highlighted or explained.
+     */
+    function fieldErrorMap(error) {
+        var details = error && error.details;
+        var fields = details && (details.fields || details);
+        return fields && typeof fields === 'object' ? fields : {};
+    }
+
+    function clearFieldError(input) {
+        input.removeAttribute('aria-invalid');
+        input.classList.remove('is-invalid');
+
+        var described = (input.getAttribute('aria-describedby') || '').split(/\s+/).filter(function (id) {
+            return !!id && id.indexOf('field-error-') !== 0;
+        });
+        if (described.length) {
+            input.setAttribute('aria-describedby', described.join(' '));
+        } else {
+            input.removeAttribute('aria-describedby');
+        }
+
+        var form = input.form;
+        if (!form) {
+            return;
+        }
+        var name = input.name;
+        form.querySelectorAll('[data-field-error]').forEach(function (note) {
+            if (note.getAttribute('data-field-error') === name) {
+                note.remove();
+            }
+        });
+    }
+
+    function clearFieldErrors(form) {
+        form.querySelectorAll('[aria-invalid="true"]').forEach(clearFieldError);
+        form.querySelectorAll('[data-field-error]').forEach(function (note) {
+            note.remove();
+        });
+    }
+
+    /** Highlight each invalid field and print its own message beneath it. */
+    function showFieldErrors(form, error) {
+        clearFieldErrors(form);
+
+        var fields = fieldErrorMap(error);
+        var prefix = 'field-error-' + (form.getAttribute('data-account-form') || 'form') + '-';
+        var first = null;
+
+        Object.keys(fields).forEach(function (name) {
+            var message = fields[name];
+            var input = form.querySelector('[name="' + name + '"]');
+            if (!message || !input) {
+                return;
+            }
+
+            var note = document.createElement('p');
+            note.className = 'field-error';
+            note.id = prefix + name;
+            note.setAttribute('data-field-error', name);
+            note.textContent = String(message);
+
+            var wrap = input.closest('.field');
+            if (wrap) {
+                wrap.appendChild(note);
+            } else {
+                input.parentNode.insertBefore(note, input.nextSibling);
+            }
+
+            input.setAttribute('aria-invalid', 'true');
+            input.classList.add('is-invalid');
+            var described = (input.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+            if (described.indexOf(note.id) === -1) {
+                described.push(note.id);
+            }
+            input.setAttribute('aria-describedby', described.join(' '));
+
+            if (!first) {
+                first = input;
+            }
+        });
+
+        if (first) {
+            first.focus();
+        }
+    }
+
     function initAccountForms() {
         document.querySelectorAll('[data-account-form]').forEach(function (form) {
+            form.addEventListener('input', function (event) {
+                var input = event.target;
+                if (input && input.getAttribute && input.getAttribute('aria-invalid') === 'true') {
+                    clearFieldError(input);
+                }
+            });
+
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
 
@@ -767,6 +864,7 @@
                 new FormData(form).forEach(function (value, key) { data[key] = value; });
 
                 setBusy(form, true);
+                clearFieldErrors(form);
                 api(form.getAttribute('data-api'), data).then(function (result) {
                     setBusy(form, false);
                     var message = (result && result.message) || 'Saved.';
@@ -778,6 +876,7 @@
                     if (form.getAttribute('data-account-form') === 'password') {
                         form.reset();
                     }
+                    clearFieldErrors(form);
                     if (status) {
                         status.className = 'form-status muted small';
                         status.textContent = message;
@@ -785,6 +884,7 @@
                     toast(message);
                 }).catch(function (error) {
                     setBusy(form, false);
+                    showFieldErrors(form, error);
                     if (status) {
                         status.className = 'form-status is-error small';
                         status.textContent = error.message;
